@@ -24,6 +24,10 @@ public class Customer implements Serializable {
     private String mail;
     private String password;
     private String phone;
+    @NotNull
+    private String gender;
+    @NotNull
+    private String birthday;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -40,10 +44,12 @@ public class Customer implements Serializable {
     private Customer() {}
 
     // Constructor público con los atributos obligatorios.
-    public Customer(String username, String name, String mail) {
+    public Customer(String username, String name, String mail, String gender, String birthday) {
         this.username = username;
         this.name = name;
         this.mail = mail;
+        this.gender = gender;
+        this.birthday = birthday;
     }
 
     public Long getId() {
@@ -94,6 +100,22 @@ public class Customer implements Serializable {
         this.phone = phone;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
     public Set<Appointment> getAppointments() {
         return appointments;
     }
@@ -106,17 +128,18 @@ public class Customer implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Customer company = (Customer) o;
-        if (id != null && company.id != null)
+        Customer customer = (Customer) o;
+        if (id != null && customer.id != null)
             // Si tenemos los ID, comparamos por ID
-            return Objects.equals(id, company.id);
+            return Objects.equals(id, customer.id);
         // sino comparamos por campos obligatorios
-        return username.equals(company.username) && name.equals(company.name) && mail.equals(company.mail);
+        return username.equals(customer.username) && name.equals(customer.name) && mail.equals(customer.mail)
+                && gender.equals(customer.gender) && birthday.equals(customer.birthday);
     }
 
     @Override
     public int hashCode() {
         // Generamos un hash basado en los campos obligatorios
-        return Objects.hash(username, name, mail);
+        return Objects.hash(username, name, mail, gender, birthday);
     }
 }

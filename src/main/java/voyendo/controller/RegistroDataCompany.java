@@ -2,14 +2,14 @@ package voyendo.controller;
 
 import javax.validation.constraints.Email;
 
-public class RegistroData {
+public class RegistroDataCompany {
     private String username;
     @Email
     private String mail;
     private String password;
     private String name;
     private String phone;
-    private String tipoRegistro;
+    private String address;
 
     public String getUsername() { return username; }
 
@@ -39,7 +39,11 @@ public class RegistroData {
 
     public void setPhone(String phone) { this.phone = phone; }
 
-    public String getTipoRegistro() { return tipoRegistro; }
+    public String getAddress() {
+        return address;
+    }
 
-    public void setTipoRegistro(String tipoRegistro) { this.tipoRegistro = tipoRegistro; }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

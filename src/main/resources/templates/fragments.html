@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="head (titulo)">
+<div th:fragment="head (titulo)">
     <meta charset="UTF-8"/>
     <title th:text="${titulo}"></title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/main.min.css}">
-    <link rel="stylesheet" href="/css/formRegistro.css">
-    <link rel="stylesheet" href="/css/homeRegistrado.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Google Maps JavaScript library -->
@@ -19,7 +16,7 @@
             alert("Debes iniciar sesión antes.");
         }
     </script>
-</head>
+</div>
 
 <div th:fragment="menuLogueadoEmpresa (company)">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

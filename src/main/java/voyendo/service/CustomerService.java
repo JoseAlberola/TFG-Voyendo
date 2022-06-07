@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.RegistroData;
+import voyendo.controller.RegistroDataCompany;
+import voyendo.controller.RegistroDataCustomer;
 import voyendo.model.*;
 
 import java.util.Optional;
@@ -39,11 +40,12 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public Customer crearCliente(RegistroData registroData){
-        logger.debug("Creando cliente " + registroData.getUsername());
-        Customer customer = new Customer(registroData.getUsername(), registroData.getName(), registroData.getMail());
-        customer.setPhone(registroData.getPhone());
-        customer.setPassword(managerUserSession.encryptPassword(registroData.getPassword()));
+    public Customer crearCliente(RegistroDataCustomer registroDataCustomer){
+        logger.debug("Creando cliente " + registroDataCustomer.getUsername());
+        Customer customer = new Customer(registroDataCustomer.getUsername(), registroDataCustomer.getName(), registroDataCustomer.getMail(),
+                registroDataCustomer.getGender(), registroDataCustomer.getBirthday());
+        customer.setPhone(registroDataCustomer.getPhone());
+        customer.setPassword(managerUserSession.encryptPassword(registroDataCustomer.getPassword()));
         return customer;
     }
 

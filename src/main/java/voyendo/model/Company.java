@@ -25,6 +25,7 @@ public class Company implements Serializable {
     private String mail;
     private String password;
     private String phone;
+    @NotNull
     private String address;
     private String startday;
     private String finishday;
@@ -58,10 +59,11 @@ public class Company implements Serializable {
     private Company() {}
 
     // Constructor público con los atributos obligatorios. En este caso el correo electrónico.
-    public Company(String username, String name, String mail, Category category) {
+    public Company(String username, String name, String mail, String address, Category category) {
         this.username = username;
         this.name = name;
         this.mail = mail;
+        this.address = address;
         this.category = category;
         category.getCompanies().add(this);
     }
@@ -168,12 +170,12 @@ public class Company implements Serializable {
             return Objects.equals(id, company.id);
         // sino comparamos por campos obligatorios
         return username.equals(company.username) && name.equals(company.name) && mail.equals(company.mail)
-                && category.equals(company.category);
+                && address.equals(company.address) && category.equals(company.category);
     }
 
     @Override
     public int hashCode() {
         // Generamos un hash basado en los campos obligatorios
-        return Objects.hash(username, name, mail, category);
+        return Objects.hash(username, name, mail, address, category);
     }
 }

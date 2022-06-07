@@ -1,113 +1,158 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: head (titulo='Registro')"></head>
+<head>
+    <div th:replace="fragments::head(titulo='Registro')"></div>
+    <link rel="stylesheet" th:href="@{/css/styleRegistro.css}">
+</head>
 
 <body>
-<div class="container-fluid">
-
-    <div class="row justify-content-center">
-        <div class="col-4">
-
-            <div class="card text-center border-warning">
-                <div class="card-body">
-                    <h4 class="card-title">Bienvenido a Voyendo</h4>
-                    <h6 class="card-subtitle mb-2 text-muted">Elige como quieres unirte y empieza a disfrutar de todos nuestros beneficios</h6>
-                    <br>
-                    <form id="registerForm" method="post" th:action="@{/registro}" th:object="${registroData}">
-                        <div class="row justify-content-center">
-                            <div class="col-10">
-                                <div class="form-group text-center row">
-                                    <label for="username">Nombre de usuario</label>
-                                    <input id="username" class="form-control" name="username" placeholder="Nombre de usuario"
-                                           type="text" th:field="*{username}" required/>
+<div class="container register">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <h3>Bienvenido</h3>
+            <p>Estás a 30 segundos de experimentar la comodidad máxima en el sector de las reservas</p>
+            <a class="btn btn-link" href="/login">Login</a>
+        </div>
+        <div class="col-md-9 register-right">
+            <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Cliente</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Empresa</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <br/>
+                    <h3 class="register-heading">Regístrate como cliente</h3>
+                    <form id="registerFormCustomer" method="post" th:action="@{/registroCustomer}" th:object="${registroDataCustomer}">
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="username" placeholder="Username *" th:field="*{username}" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="mail" placeholder="Correo electrónico *" th:field="*{mail}" required/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="name" placeholder="Nombre completo *" th:field="*{name}" required/>
+                            </div>
+                            <div class="form-group">
+                                <div class="maxl">
+                                    <label class="radio inline padding-right-10">
+                                        <input type="radio" name="gender" value="male" th:field="*{gender}" checked required>
+                                        <span> Hombre </span>
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="radio" name="gender" value="female" th:field="*{gender}">
+                                        <span>Mujer </span>
+                                    </label>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="password">Contraseña</label>
-                                    <input id="password" class="form-control" name="password" placeholder="Contraseña"
-                                           type="password" th:field="*{password}" required/>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="mail">Correo electrónico</label>
-                                    <input id="mail" class="form-control" name="mail" placeholder="Correo electrónico" type="text"
-                                           th:field="*{mail}" required/>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="phone">Número de teléfono</label>
-                                    <input id="phone" class="form-control" name="phone" placeholder="Número de teléfono" type="tel"
-                                           th:field="*{phone}"/>
-                                </div>
-                                <div class="row">
-                                    <label>Tipo de registro</label>
-                                </div>
-                                <fieldset class="form-group row">
-                                        <div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gridRadios" id="cliente" value="cliente" th:field="*{tipoRegistro}" checked required>
-                                                <label class="form-check-label" for="cliente">
-                                                    Soy cliente
-                                                </label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gridRadios" id="empresa" value="empresa" th:field="*{tipoRegistro}">
-                                                <label class="form-check-label" for="empresa">
-                                                    Soy empresa
-                                                </label>
-                                            </div>
-                                        </div>
-                                </fieldset>
-
-                                <div class="form-group row">
-                                    <label id="labelName" for="name">Nombre completo</label>
-                                    <input id="name" class="form-control" name="name" placeholder="Nombre completo" type="text"
-                                           th:field="*{name}" required/>
-                                </div>
-
-                                <button type="submit" class="btn btn-warning">Registro</button>
-                                <a class="btn btn-link" href="/login">Tengo cuenta</a>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="password" placeholder="Contraseña *" th:field="*{password}" required/>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" minlength="9" maxlength="9" name="phone" class="form-control" placeholder="Teléfono"
+                                       th:field="*{phone}"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="date" class="form-control" name="birthday" placeholder="Fecha de nacimiento *" th:field="*{birthday}" required />
+                            </div>
+                            <div style="text-align: right">
+                                <input type="submit" class="btnRegister" value="Unirme"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 justify-content-center errorDiv">
+                            <div>
+                                <div th:object="${registroDataCustomer}">
+                                    <ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                                <ul th:if="${error != null}" class="alert alert-danger">
+                                    <li th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <br/>
+                    <h3  class="register-heading">Regístrate como empresa</h3>
+                    <form id="registerFormCompany" method="post" th:action="@{/registroCompany}" th:object="${registroDataCompany}">
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="username" placeholder="Username *" th:field="*{username}" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="mail" placeholder="Correo electrónico *" th:field="*{mail}" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="password" placeholder="Contraseña *" th:field="*{password}" required/>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" minlength="9" maxlength="9" name="phone" class="form-control" placeholder="Teléfono" th:field="*{phone}" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="name" placeholder="Nombre de la empresa *" th:field="*{name}" required />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="text" id="search_input" class="form-control" name="address" placeholder="Dirección *" th:field="*{address}" required/>
+                            </div>
+                            <div style="text-align: right">
+                                <input type="submit" class="btnRegister" value="Unirme"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 justify-content-center errorDiv">
+                            <div>
+                                <div th:object="${registroDataCompany}">
+                                    <ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                                <ul th:if="${error != null}" class="alert alert-danger">
+                                    <li th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     </form>
                 </div>
             </div>
-
-
-        </div>
-    </div>
-    <div class="row mt-3 justify-content-center">
-        <div class="col-9">
-            <div th:object="${registroData}">
-                <ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
-                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-                </ul>
-            </div>
-            <ul th:if="${error != null}" class="alert alert-danger">
-                <li th:text="${error}"></li>
-            </ul>
         </div>
     </div>
 </div>
-
 <div th:replace="fragments::javascript"/>
+
 <script type="text/javascript">
-    (function() {
-        var opciones = document.forms['registerForm'].elements['gridRadios'];
+    var searchInput = 'search_input';
 
-        for (var i=0, len=opciones.length; i<len; i++) {
-            opciones[i].onclick = function() {
-                var label = document.getElementById('labelName');
-                if(document.getElementById('cliente').checked) {
-                    label.textContent = "Nombre completo";
-                    document.getElementById("name").placeholder = "Nombre completo";
-                }
-                if(document.getElementById('empresa').checked) {
-                    label.textContent = "Nombre de la empresa";
-                    document.getElementById("name").placeholder = "Nombre de la empresa";
-                }
-            };
-        }
-    }());
+    $(document).ready(function () {
+        var autocomplete;
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById(searchInput)), {
+            types: ['geocode'],
+            componentRestrictions: {
+                country: "ES"
+            }
+        });
+
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+    });
 </script>
-
 </body>
 </html>

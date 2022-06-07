@@ -1,0 +1,70 @@
+.register{
+    background: -webkit-linear-gradient(left, #3931af, #00c6ff);
+    margin-top: 5%;
+    padding: 3%;
+}
+.register-left{
+    text-align: center;
+    color: #fff;
+    margin-top: 6%;
+}
+
+.register-left p{
+    font-weight: lighter;
+    padding: 5%;
+    margin-top: -4%;
+}
+
+.register-left div{
+    margin-top: -5%;
+}
+.register-left a{
+    border: none;
+    border-radius: 7px;
+    padding: 2%;
+    width: 50%;
+    background: #f8f9fa;
+    font-weight: bold;
+    color: #383d41;
+    margin-top: 15%;
+    margin-bottom: 3%;
+}
+
+.register-left a:hover { text-decoration: none; }
+
+.register-right{
+    background: #f8f9fa;
+}
+
+.register .register-heading{
+    text-align: center;
+    margin-top: 6%;
+    margin-bottom: -10%;
+    color: #495057;
+}
+.register .register-form{
+    padding: 10%;
+    margin:auto;
+    margin-top: 5%;
+    width: 90%;
+}
+.padding-right-10{
+    padding-right: 10px;
+}
+.max1 .radio:hover{
+    cursor: pointer;
+}
+.btnLogin{
+    margin-top: 7%;
+    border: none;
+    border-radius: 12px;
+    padding: 2%;
+    background: #0062cc;
+    color: #fff;
+    font-weight: 600;
+    width: 35%;
+    text-align: center;
+}
+.divBtnLogin{
+    text-align: center;
+}

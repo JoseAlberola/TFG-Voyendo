@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: head (titulo='Home')"></head>
+<head>
+    <div th:replace="fragments::head(titulo='Home')"></div>
+</head>
+
 <style>
     #calendar-container {
         position: fixed;

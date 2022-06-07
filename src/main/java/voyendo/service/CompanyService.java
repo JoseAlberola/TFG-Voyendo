@@ -2,7 +2,7 @@ package voyendo.service;
 
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.ModificarCompanyData;
-import voyendo.controller.RegistroData;
+import voyendo.controller.RegistroDataCompany;
 import voyendo.model.Category;
 import voyendo.model.CategoryRepository;
 import voyendo.model.Company;
@@ -46,15 +46,16 @@ public class CompanyService {
     }
 
     @Transactional(readOnly = true)
-    public Company crearEmpresa(RegistroData registroData){
-        logger.debug("Creando empresa " + registroData.getUsername());
+    public Company crearEmpresa(RegistroDataCompany registroDataCompany){
+        logger.debug("Creando empresa " + registroDataCompany.getUsername());
         Category category = categoryRepository.findByName("Categoria").orElse(null);  // Default category
         if (category == null) {
-            throw new CategoryServiceException("Categoría Default no existe al crear la empresa " + registroData.getUsername());
+            throw new CategoryServiceException("Categoría Default no existe al crear la empresa " + registroDataCompany.getUsername());
         }
-        Company company = new Company(registroData.getUsername(), registroData.getName(), registroData.getMail(), category);
-        company.setPhone(registroData.getPhone());
-        company.setPassword(managerUserSession.encryptPassword(registroData.getPassword()));
+        Company company = new Company(registroDataCompany.getUsername(), registroDataCompany.getName(), registroDataCompany.getMail(),
+                registroDataCompany.getAddress(), category);
+        company.setPhone(registroDataCompany.getPhone());
+        company.setPassword(managerUserSession.encryptPassword(registroDataCompany.getPassword()));
         return company;
     }
 

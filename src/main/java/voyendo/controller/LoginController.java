@@ -67,33 +67,48 @@ public class LoginController {
 
     @GetMapping("/registro")
     public String registroForm(Model model) {
-        model.addAttribute("registroData", new RegistroData());
-        return "formRegistro2";
+        model.addAttribute("registroDataCustomer", new RegistroDataCustomer());
+        model.addAttribute("registroDataCompany", new RegistroDataCompany());
+        return "formRegistro";
     }
 
-   @PostMapping("/registro")
-   public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
+   @PostMapping("/registroCustomer")
+   public String registroCustomerSubmit(@Valid RegistroDataCustomer registroDataCustomer, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "formRegistro";
         }
 
-        if (companyService.findByUsername(registroData.getUsername()) != null || customerService.findByUsername(registroData.getUsername()) != null) {
-            model.addAttribute("registroData", registroData);
-            model.addAttribute("error", "El usuario " + registroData.getUsername() + " ya existe");
+        if (companyService.findByUsername(registroDataCustomer.getUsername()) != null || customerService.findByUsername(registroDataCustomer.getUsername()) != null) {
+            model.addAttribute("registroDataCustomer", registroDataCustomer);
+            model.addAttribute("registroDataCompany", new RegistroDataCompany());
+            model.addAttribute("error", "El usuario " + registroDataCustomer.getUsername() + " ya existe");
             return "formRegistro";
         }
 
-        if(registroData.getTipoRegistro().equals("empresa")){
-            Company company = companyService.crearEmpresa(registroData);
-            companyService.registrar(company);
-        }else{
-            Customer customer = customerService.crearCliente(registroData);
-            customerService.registrar(customer);
-        }
-
+        Customer customer = customerService.crearCliente(registroDataCustomer);
+        customerService.registrar(customer);
         return "redirect:/login";
    }
+
+    @PostMapping("/registroCompany")
+    public String registroCompanySubmit(@Valid RegistroDataCompany registroDataCompany, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            return "formRegistro";
+        }
+
+        if (companyService.findByUsername(registroDataCompany.getUsername()) != null || customerService.findByUsername(registroDataCompany.getUsername()) != null) {
+            model.addAttribute("registroDataCustomer", new RegistroDataCustomer());
+            model.addAttribute("registroDataCompany", registroDataCompany);
+            model.addAttribute("error", "El usuario " + registroDataCompany.getUsername() + " ya existe");
+            return "formRegistro";
+        }
+
+        Company company = companyService.crearEmpresa(registroDataCompany);
+        companyService.registrar(company);
+        return "redirect:/login";
+    }
 
    @GetMapping("/logout")
    public String logout(HttpSession session) {
