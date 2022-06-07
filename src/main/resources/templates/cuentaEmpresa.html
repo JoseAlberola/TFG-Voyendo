@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Cuenta Empresa')"></head>
+
+<body>
+
+<div th:replace="fragments::menuLogueadoEmpresa(company=${company})"/>
+
+<div class="container-fluid">
+    <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+        <span th:text="${mensaje}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="accordion mt-3" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Información básica
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <form id="infoBasicaForm" method="post" th:action="@{/companies/{id}/modificarInfoBasica(id=${company.getId()})}"
+                          th:object="${modificarCompanyData}">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="username">Nombre de usuario</label>
+                                <input type="text" class="form-control bg-light" id="username" aria-describedby="usernameHelpText"
+                                       name="username" th:field="*{username}" readonly>
+                                <small id="usernameHelpText" class="form-text text-muted">
+                                    No puedes modificar tu nombre de usuario. Todos los clientes te conocerán por el nombre de la empresa.
+                                </small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="name">Nombre de la empresa</label>
+                                <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="mail">Email</label>
+                                <input type="email" class="form-control" id="mail" name="mail" th:field="*{mail}" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="phone">Teléfono</label>
+                                <input type="text" class="form-control" id="phone" name="phone" th:field="*{phone}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="address">Dirección</label>
+                                <input type="text" class="form-control" id="address" name="address" th:field="*{address}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Contraseña
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    <form id="passwordForm" method="post" th:action="@{/companies/{id}/modificarPassword(id=${company.getId()})}"
+                          th:object="${modificarCompanyData}">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="password">Contraseña actual</label>
+                                <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
+                                       required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="newPassword">Contraseña nueva</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" th:field="*{newPassword}"
+                                       required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="confirmNewPassword">Repetir contraseña nueva</label>
+                                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
+                                       th:field="*{confirmNewPassword}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Detalles empresa
+                        <span th:if="${company.category.name == 'Categoria'} or ${company.startday == null} or ${company.finishday == null}">
+                            &nbsp; &nbsp;
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                    <form id="detallesEmpresaForm" method="post" th:action="@{/companies/{id}/modificarDetallesEmpresa(id=${company.getId()})}"
+                          th:object="${modificarCompanyData}">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="startday">Hora de apertura</label>
+                                <input type="time" step="1800" class="form-control" id="startday" name="startday" th:field="*{startday}"
+                                       required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="finishday">Hora de cierre</label>
+                                <input type="time" step="1800" class="form-control" id="finishday" name="finishday" th:field="*{finishday}"
+                                       required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="category">Categoría de negocio</label>
+                                <select id="category" class="form-control" name="category.name" th:field="*{category.name}" required>
+                                    <option th:each="categoria: ${categorias}" th:value="${categoria.name == 'Categoria'} ? '' : ${categoria.name}" th:text="${categoria.name == 'Categoria'} ? 'Selecciona...' : ${categoria.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingFour">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Servicios
+                        <span th:if="${company.labours.isEmpty()}">
+                            &nbsp; &nbsp;
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                            </svg>
+                        </span>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                <div class="card-body">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="namelabour">Nombre</label>
+                                <input type="text" class="form-control" id="namelabour">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="durationlabour">Duración</label>
+                                <input type="text" class="form-control" id="durationlabour">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="pricelabour">Precio</label>
+                                <input type="text" class="form-control" id="pricelabour">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+<script type="text/javascript">
+    var inputStart = document.getElementById("startday");
+    var inputFinish = document.getElementById("finishday");
+
+    function comprobarHoraStart(valor, campo) {
+        var mensaje = "";
+        // comprobar los posibles errores
+        if (inputStart.value >= inputFinish.value && inputFinish.value != "") {
+            mensaje = "La hora de apertura no puede ser posterior o igual a la hora de cierre.";
+            console.log("finish " + inputFinish.value + " justo detrás");
+        }
+        // mostrar/resetear mensaje (el mensaje se resetea poniendolo a "")
+        inputStart.setCustomValidity(mensaje);
+    }
+
+    function comprobarHoraFinish(valor, campo) {
+        var mensaje = "";
+        // comprobar los posibles errores
+        if (inputFinish.value <= inputStart.value && inputStart != "") {
+            mensaje = "La hora de cierre no puede ser anterior o igual a la hora de apertura.";
+        }
+        // mostrar/resetear mensaje (el mensaje se resetea poniendolo a "")
+        inputFinish.setCustomValidity(mensaje);
+    }
+
+    inputStart.addEventListener("invalid", comprobarHoraStart);
+    inputStart.addEventListener("input", comprobarHoraStart);
+    inputFinish.addEventListener("invalid", comprobarHoraFinish);
+    inputFinish.addEventListener("input", comprobarHoraFinish);
+
+    var address = 'address';
+
+    $(document).ready(function () {
+        var autocomplete;
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById(address)), {
+            types: ['geocode'],
+            componentRestrictions: {
+                country: "ES"
+            }
+        });
+
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Descripción usuario')"></head>
+
+<body>
+
+<span th:if="${usuarioLogeado == null}">
+    <div th:replace="fragments::menuNoLogueado"/>
+</span>
+<span th:unless="${usuarioLogeado == null}">
+    <div th:replace="fragments::menuLogueado(usuario=${usuarioLogeado})"/>
+</span>
+
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Descripción de usuario</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>Id</td>
+                    <td th:text="${usuarioConsultado.id}"></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td th:text="${usuarioConsultado.email}"></td>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td th:text="${usuarioConsultado.nombre}"></td>
+                </tr>
+                <tr>
+                    <td>Fecha de Nacimiento</td>
+                    <td th:text="${usuarioConsultado.getFechaNacimiento()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>

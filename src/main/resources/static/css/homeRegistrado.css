@@ -1,0 +1,13 @@
+.sinBordes{
+    border-radius: 0px;
+}
+
+.sinBordesDerecha{
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.sinBordesIzquierda{
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}

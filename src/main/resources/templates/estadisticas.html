@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Estadísticas')"></head>
+
+<body>
+
+<div th:replace="fragments::menuLogueadoEmpresa(company=${company})"/>
+
+<div class="container-fluid">
+    <h1 th:text="'Estadísticas de la empresa ' + ${company.getName()}"></h1>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>

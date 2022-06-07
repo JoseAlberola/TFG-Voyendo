@@ -1,0 +1,14 @@
+/*
+
+.form-control:focus{
+    border-color: #ffbf00;
+    box-shadow: #ffbf00;
+    -webkit-box-shadow: none;
+}
+
+.has-error .form-control:focus{
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+ */

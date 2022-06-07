@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Equipos')"></head>
+
+<body>
+
+<div th:replace="fragments::menuLogueado(usuario=${usuario})"/>
+
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Listado de equipos</h2>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                </tr>
+                </thead>
+                <tbody id="bodyTabla">
+                <tr th:each="equipo: ${equipos}">
+                    <td style="vertical-align:middle;" th:text="${equipo.id}"></td>
+                    <td style="vertical-align:middle;">
+                        <a th:href="@{/equipos/{id}(id=${equipo.id})}" th:text="${equipo.nombre}"></a>
+                    </td>
+                    <td th:if="${usuario.isAdministrador()}">
+                        <a class="btn btn-primary btn-xs" th:href="@{/equipos/{id}/editar(id=${equipo.id})}"/>editar</a>
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">borrar</button>
+                    </td>
+                    <td>
+                        <a th:id="${equipo.id}" class="btn btn-primary btn-xs" style="width: 120px;"
+                        th:text="${equipo.usuarios.contains(usuario)} ? 'Abandonar' : 'Unirme'"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p><a class="btn btn-primary" href="/equipos/nuevo"> Crear equipo</a></p>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+<script>
+    function del(urlBorrar) {
+        if (confirm('¿Estás seguro/a de que quieres borrar el equipo?')) {
+            fetch(urlBorrar, {
+                method: 'DELETE'
+            }).then((res) => location.reload());
+        }
+    }
+
+    document.getElementById("bodyTabla").addEventListener("click", async function(e){
+        var id = e.target.id
+
+        if (e.target.nodeName == "A" && id !== "") {  // Si el click es sobre el boton unirse/abandonar
+            var idEquipo = id;
+            await fetch("/equipos/" + idEquipo + "/unirme");
+
+            var etiquetaA = document.getElementById(idEquipo);
+            if(etiquetaA.text == "Abandonar"){
+                etiquetaA.text = "Unirme";
+            }else{
+                etiquetaA.text = "Abandonar";
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
