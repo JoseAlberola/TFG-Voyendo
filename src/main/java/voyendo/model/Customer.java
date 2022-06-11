@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -29,7 +30,8 @@ public class Customer implements Serializable {
     @NotNull
     private String gender;
     @NotNull
-    private String birthday;
+    @Temporal(TemporalType.DATE)
+    private Date birthday;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -47,7 +49,7 @@ public class Customer implements Serializable {
     private Customer() {}
 
     // Constructor público con los atributos obligatorios.
-    public Customer(String username, String name, String mail, String gender, String birthday) {
+    public Customer(String username, String name, String mail, String gender, Date birthday) {
         this.username = username;
         this.name = name;
         this.mail = mail;
@@ -111,11 +113,11 @@ public class Customer implements Serializable {
         this.gender = gender;
     }
 
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

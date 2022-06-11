@@ -1,6 +1,9 @@
 package voyendo.controller;
 
 import javax.validation.constraints.Email;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegistroDataCustomer {
     private String username;
@@ -51,6 +54,16 @@ public class RegistroDataCustomer {
 
     public String getBirthday() {
         return birthday;
+    }
+
+    public Date getDateBirthday() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return sdf.parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date();
+        }
     }
 
     public void setBirthday(String birthday) {

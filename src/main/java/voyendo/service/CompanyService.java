@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -212,7 +213,7 @@ public class CompanyService {
     }
 
     @Transactional(readOnly = true)
-    public double[] obtenerNumeroClientesPorGenero(Company company){
+    public int[] obtenerNumeroClientesPorGenero(Company company){
         int contadorHombres = 0;
         int contadorMujeres = 0;
         for(Appointment reserva : company.getAppointments()){
@@ -222,8 +223,43 @@ public class CompanyService {
                 contadorMujeres++;
             }
         }
-        double porcionHombres = contadorHombres * 100.0 / company.getAppointments().size();
-        double porcionMujeres = contadorMujeres * 100.0 / company.getAppointments().size();
-        return new double[] {porcionHombres, porcionMujeres};
+        // double porcionHombres = contadorHombres * 100.0 / company.getAppointments().size();
+        // double porcionMujeres = contadorMujeres * 100.0 / company.getAppointments().size();
+        return new int[] {contadorHombres, contadorMujeres};
+    }
+
+    /*
+        1. Entre 0 y 25
+        2. Entre 26 y 45
+        3. Entre 46 y 65
+        4. Mayores que 65
+     */
+    @Transactional(readOnly = true)
+    public int[] obtenerNumeroClientesPorEdad(Company company){
+
+        int totalRango1 = appointmentRepository.clientesMenores25(company.getId());
+        int totalRango2 = appointmentRepository.clientesEntre26y45(company.getId());
+        int totalRango3 = appointmentRepository.clientesEntre46y65(company.getId());
+        int totalRango4 = appointmentRepository.clientesMayores65(company.getId());
+
+        return new int[] {totalRango1, totalRango2, totalRango3, totalRango4};
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<String> obtenerServicios(Company company){
+        ArrayList<String> resultado = new ArrayList<>();
+        for(Labour servicio : company.getLabours()){
+            resultado.add(servicio.getName());
+        }
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<Integer> obtenerTotalReservasPorServicio(Company company){
+        ArrayList<Integer> resultado = new ArrayList<>();
+        for(Labour servicio : company.getLabours()){
+            resultado.add(appointmentRepository.totalReservasPorServicio(company.getId(), servicio.getId()));
+        }
+        return resultado;
     }
 }

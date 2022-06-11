@@ -43,7 +43,7 @@ public class CustomerService {
     public Customer crearCliente(RegistroDataCustomer registroDataCustomer){
         logger.debug("Creando cliente " + registroDataCustomer.getUsername());
         Customer customer = new Customer(registroDataCustomer.getUsername(), registroDataCustomer.getName(), registroDataCustomer.getMail(),
-                registroDataCustomer.getGender(), registroDataCustomer.getBirthday());
+                registroDataCustomer.getGender(), registroDataCustomer.getDateBirthday());
         customer.setPhone(registroDataCustomer.getPhone());
         customer.setPassword(managerUserSession.encryptPassword(registroDataCustomer.getPassword()));
         return customer;

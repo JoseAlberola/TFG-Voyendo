@@ -5,6 +5,7 @@
     <div th:replace="fragments::head(titulo='Estadísticas')"></div>
     <link rel="stylesheet" href="/css/styleEstadisticas.css">
     <script th:src="@{/js/d3.min.js}"></script>
+    <script th:src="@{/js/plotly-2.12.1.min.js}"></script>
 </head>
 
 <body>
@@ -127,18 +128,53 @@
             </div>
         </div>
     </div>
-    <h4>Pie Chart</h4>
+    <br/><br/>
     <div class="row">
-        <svg class="svgChart" width="300" height="300"></svg> <!--Step 2-->
+        <div class="col-md-4">
+            <div class="pie-container">
+                <div class="pìe-content">
+                    <div id='pieGender'></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="pie-container">
+                <div class="pìe-content">
+                    <div id='pieAge'></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="pie-container">
+                <div class="pìe-content">
+                    <div id='pieNumberAppointments'></div>
+                </div>
+            </div>
+        </div>
     </div>
+    <svg class="svgChart" width="300" height="300"></svg> <!--Step 2-->
+
 </div>
 
 
 <script th:inline="javascript">
+    // Pie chart Gender
     var numeroHombres = [[${valuesPieChartGender[0]}]];
     var numeroMujeres = [[${valuesPieChartGender[1]}]];
+
+    // Pie chart Age
+    var totalClientesMenores25 = [[${valuesPieChartAge[0]}]];
+    var totalClientesEntre26y45 = [[${valuesPieChartAge[1]}]];
+    var totalClientesEntre46y65 = [[${valuesPieChartAge[2]}]];
+    var totalclientesMayores65 = [[${valuesPieChartAge[3]}]];
+
+    // Pie chart Total Appointments per Labour
+    var arrayValuesPieChartAppointmentsLabour = [[${valuesPieChartAppointmentsLabour}]];
+    var arrayLabelsPieChartAppointmentsLabour = [[${labelsPieChartAppointmentsLabour}]];
+
 </script>
 <script th:src="@{/js/pie1.js}"></script>
+<script th:src="@{/js/pies.js}"></script>
 
 <div th:replace="fragments::javascript"/>
 </body>
