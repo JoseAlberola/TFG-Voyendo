@@ -1,5 +1,7 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -35,6 +37,7 @@ public class Customer implements Serializable {
     // CUIDADO!! No es recomendable hacerlo en aquellos casos en los
     // que la relación pueda traer a memoria una gran cantidad de entidades
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonManagedReference
     Set<Appointment> appointments = new HashSet<>();
 
     // Constructor vacío necesario para JPA/Hibernate.

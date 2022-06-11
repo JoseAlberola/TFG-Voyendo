@@ -1,5 +1,7 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -27,17 +29,20 @@ public class Appointment implements Serializable {
     // Nombre de la columna en la BD que guarda físicamente
     // el ID de la compañía con el que está asociado un servicio
     @JoinColumn(name = "company_id")
+    @JsonBackReference
     private Company company;
 
     // Relación muchos-a-uno entre servicios y clientes
     @NotNull
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonBackReference
     private Customer customer;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "labour_id")
+    @JsonBackReference
     private Labour labour;
 
     // Constructor vacío necesario para JPA/Hibernate.

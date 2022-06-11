@@ -3,16 +3,15 @@ package voyendo.service;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.ModificarCompanyData;
 import voyendo.controller.RegistroDataCompany;
-import voyendo.model.Category;
-import voyendo.model.CategoryRepository;
-import voyendo.model.Company;
-import voyendo.model.CompanyRepository;
+import voyendo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -24,13 +23,16 @@ public class CompanyService {
 
     private CategoryRepository categoryRepository;
 
+    private AppointmentRepository appointmentRepository;
+
     @Autowired
     ManagerUserSession managerUserSession;
 
     @Autowired
-    public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository) {
+    public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository, AppointmentRepository appointmentRepository) {
         this.companyRepository = companyRepository;
         this.categoryRepository = categoryRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -143,5 +145,85 @@ public class CompanyService {
         categoryRepository.save(categoriaNueva);
         companyRepository.save(company);
         return company;
+    }
+
+    public double calcularPorcentaje(double valorNuevo, double valorAnterior){
+        if(valorNuevo == 0.0){
+            return valorAnterior * -100.0;
+        }
+        if(valorAnterior == 0.0){
+            return valorNuevo * 100;
+        }
+        return (valorNuevo / valorAnterior) * 100.0 - 100.0;
+    }
+
+    public String colorPorcentaje(double porcentaje){
+        if(porcentaje < 0){
+            return "red";
+        }else{
+            return "green";
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsCard obtenerCartaReservasTotales(Company company){
+        double totalReservasEsteMes = appointmentRepository.totalAppointmentsThisMonth(company.getId());
+        double totalReservasMesPasado = appointmentRepository.totalAppointmentsLastMonth(company.getId());
+
+        double porcentaje = calcularPorcentaje(totalReservasEsteMes, totalReservasMesPasado);
+        return new StatisticsCard(totalReservasEsteMes, Math.abs(porcentaje), colorPorcentaje(porcentaje));
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsCard obtenerCartaIngresosTotales(Company company){
+        double totalIngresosEsteMes = appointmentRepository.totalRevenueThisMonth(company.getId());
+        double totalIngresosMesPasado = appointmentRepository.totalRevenueLastMonth(company.getId());
+
+        double porcentaje = calcularPorcentaje(totalIngresosEsteMes, totalIngresosMesPasado);
+        return new StatisticsCard(totalIngresosEsteMes, Math.abs(porcentaje), colorPorcentaje(porcentaje));
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsCard obtenerCartaClientesTotales(Company company){
+        double totalClientesEsteMes = appointmentRepository.totalCustomersThisMonth(company.getId());
+        double totalClientesMesPasado = appointmentRepository.totalCustomersLastMonth(company.getId());
+
+        double porcentaje = calcularPorcentaje(totalClientesEsteMes, totalClientesMesPasado);
+        return new StatisticsCard(totalClientesEsteMes, Math.abs(porcentaje), colorPorcentaje(porcentaje));
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsCard obtenerCartaNuevosClientes(Company company){
+        double totalNuevosClientesEsteMes = appointmentRepository.totalNewCustomersThisMonth(company.getId());
+        double totalNuevosClientesMesPasado = appointmentRepository.totalNewCustomersLastMonth(company.getId());
+
+        double porcentaje = calcularPorcentaje(totalNuevosClientesEsteMes, totalNuevosClientesMesPasado);
+        return new StatisticsCard(totalNuevosClientesEsteMes, Math.abs(porcentaje), colorPorcentaje(porcentaje));
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<StatisticsCard> obtenerCartasEstadisticas(Company company){
+        ArrayList<StatisticsCard> cartas = new ArrayList<>();
+        cartas.add(obtenerCartaReservasTotales(company));
+        cartas.add(obtenerCartaIngresosTotales(company));
+        cartas.add(obtenerCartaClientesTotales(company));
+        cartas.add(obtenerCartaNuevosClientes(company));
+        return cartas;
+    }
+
+    @Transactional(readOnly = true)
+    public double[] obtenerNumeroClientesPorGenero(Company company){
+        int contadorHombres = 0;
+        int contadorMujeres = 0;
+        for(Appointment reserva : company.getAppointments()){
+            if(reserva.getCustomer().getGender().equals("male")){
+                contadorHombres++;
+            }else {
+                contadorMujeres++;
+            }
+        }
+        double porcionHombres = contadorHombres * 100.0 / company.getAppointments().size();
+        double porcionMujeres = contadorMujeres * 100.0 / company.getAppointments().size();
+        return new double[] {porcionHombres, porcionMujeres};
     }
 }

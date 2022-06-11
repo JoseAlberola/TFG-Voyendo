@@ -1,5 +1,7 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -34,6 +36,7 @@ public class Labour implements Serializable {
     private Company company;
 
     @OneToMany(mappedBy = "labour", fetch = FetchType.EAGER)
+    @JsonManagedReference
     Set<Appointment> appointments = new HashSet<>();
 
     // Constructor vacío necesario para JPA/Hibernate.

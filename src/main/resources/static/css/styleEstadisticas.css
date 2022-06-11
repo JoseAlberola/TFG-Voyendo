@@ -1,0 +1,53 @@
+body{
+    background-color: #F4F7FC;
+}
+.contenedor-principal{
+    width: 85%;
+    margin: 30px auto auto;
+}
+.title-section{
+    margin-bottom: 10px;
+}
+.card-top{
+    background-color: white;
+}
+.card-top-div-icon{
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
+    border-radius: 45px;
+    text-align: center;
+    background-color: rgba(0, 88, 255, 0.1);
+    border: 1px solid rgba(0, 88, 255, 0.1);
+    float:right;
+}
+.svg-icon{
+    position:relative;
+    top: calc(50% - 15px);
+}
+.card-top-content{
+    padding: 10px;
+}
+.card-top-title{
+    color: #686868;
+    font-weight: 600;
+}
+.card-top-number{
+    font-size: 24px;
+    font-weight: bold;
+}
+.card-top-percentage{
+    font-weight: 625;
+    font-size: 14px;
+}
+.percentage-green{
+    color: green;
+}
+.percentage-red{
+    color: red;
+}
+.card-top-footer{
+    color: #686868;
+    font-weight: 450;
+    margin-left: 3px;
+}

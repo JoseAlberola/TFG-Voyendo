@@ -151,6 +151,10 @@ public class CompanyController {
             throw new UsuarioNotFoundException();
         }
         model.addAttribute("company", company);
+
+        model.addAttribute("topCards", companyService.obtenerCartasEstadisticas(company));
+        model.addAttribute("valuesPieChartGender", companyService.obtenerNumeroClientesPorGenero(company));
+
         return "estadisticas";
     }
 }
