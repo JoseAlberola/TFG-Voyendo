@@ -152,6 +152,9 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div id='line'><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
     <svg class="svgChart" width="300" height="300"></svg> <!--Step 2-->
 
 </div>
@@ -172,6 +175,89 @@
     var arrayValuesPieChartAppointmentsLabour = [[${valuesPieChartAppointmentsLabour}]];
     var arrayLabelsPieChartAppointmentsLabour = [[${labelsPieChartAppointmentsLabour}]];
 
+    // Prueba Line
+    var trace1 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL High',
+        x: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', '2022-06-01'],
+        y: [102, 115, 80, 134, 108, 94],
+        line: {color: '#17BECF'}
+    }
+
+    var trace2 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', '2022-06-01'],
+        y: [86, 104, 92, 112, 98, 124],
+        line: {color: '#7F7F7F'}
+    }
+
+    var trace3 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', '2022-06-01'],
+        y: [96, 114, 102, 102, 86, 100],
+        line: {color: '#7F7F7F'}
+    }
+    var trace4 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', '2022-06-01'],
+        y: [82, 89, 108, 110, 98, 110],
+        line: {color: '#7F7F7F'}
+    }
+    var trace5 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', '2022-06-01'],
+        y: [80, 100, 92, 86, 114, 124],
+        line: {color: '#7F7F7F'}
+    }
+    var data = [trace1,trace2,trace3,trace4,trace5];
+
+    var layout = {
+        title: 'Histórico de reservas',
+        xaxis: {
+            autorange: true,
+            range: ['2022-01-01', '2022-06-01'],
+            rangeselector: {buttons: [
+                    {
+                        count: 1,
+                        label: '1m',
+                        step: 'month',
+                        stepmode: 'backward'
+                    },
+                    {
+                        count: 6,
+                        label: '6m',
+                        step: 'month',
+                        stepmode: 'backward'
+                    },
+                    {step: 'all'}
+                ]},
+            rangeslider: {range: ['2022-01-01', '2022-06-01']},
+            type: 'date'
+        },
+        yaxis: {
+            autorange: true,
+            type: 'linear'
+        },
+        legend: {
+            x: 0.5,
+            xanchor: "center",
+            y: -0.5,
+            orientation: "h"
+        }
+    };
+
+    var config = {locale: 'es'};
+
+    Plotly.newPlot('line', data, layout, config);
 </script>
 <script th:src="@{/js/pie1.js}"></script>
 <script th:src="@{/js/pies.js}"></script>
