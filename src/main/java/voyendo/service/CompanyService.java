@@ -1,8 +1,11 @@
 package voyendo.service;
 
+import org.apache.tomcat.jni.Local;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.graficos.HistoricoReservasGrafico;
 import voyendo.controller.ModificarCompanyData;
 import voyendo.controller.RegistroDataCompany;
+import voyendo.controller.graficos.TraceHistoricoReservasGrafico;
 import voyendo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 @Service
 public class CompanyService {
@@ -223,8 +226,6 @@ public class CompanyService {
                 contadorMujeres++;
             }
         }
-        // double porcionHombres = contadorHombres * 100.0 / company.getAppointments().size();
-        // double porcionMujeres = contadorMujeres * 100.0 / company.getAppointments().size();
         return new int[] {contadorHombres, contadorMujeres};
     }
 
@@ -261,5 +262,41 @@ public class CompanyService {
             resultado.add(appointmentRepository.totalReservasPorServicio(company.getId(), servicio.getId()));
         }
         return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<Date> procesarFechas(List<Date> todasLasFechas){
+        ArrayList<Date> resultado = new ArrayList<>();
+        SortedSet<Date> fechas = new TreeSet<>();
+        for(Date fecha : todasLasFechas){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(fecha);
+            LocalDate primeroMes;
+            if(calendar.get(Calendar.MONTH) == 11){
+                primeroMes = LocalDate.of(calendar.get(Calendar.YEAR)+1, 1,
+                        calendar.get(Calendar.DAY_OF_MONTH)).with(TemporalAdjusters.firstDayOfMonth());
+            }else{
+                primeroMes = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+2,
+                        calendar.get(Calendar.DAY_OF_MONTH)).with(TemporalAdjusters.firstDayOfMonth());
+            }
+            fechas.add(java.sql.Date.valueOf(primeroMes));
+        }
+        resultado.addAll(fechas);
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public HistoricoReservasGrafico obtenerHistoricoReservas(Company company){
+        ArrayList<TraceHistoricoReservasGrafico> traces = new ArrayList<>();
+        for(Labour servicio : company.getLabours()){
+            ArrayList<Date> fechas = procesarFechas(appointmentRepository.fechasReservasPorServicio(company.getId(), servicio.getId()));
+            ArrayList<Integer> valores = new ArrayList<>(appointmentRepository.reservasPorServicioMes(company.getId(), servicio.getId()));
+            TraceHistoricoReservasGrafico trace = new TraceHistoricoReservasGrafico(servicio.getName(), fechas, valores);
+            traces.add(trace);
+        }
+        Date fechaInicioRango = appointmentRepository.fechaPrimeraReserva(company.getId());
+        Date fechaFinRango = appointmentRepository.fechaUltimaReserva(company.getId());
+        HistoricoReservasGrafico grafico = new HistoricoReservasGrafico(traces, fechaInicioRango, fechaFinRango);
+        return grafico;
     }
 }

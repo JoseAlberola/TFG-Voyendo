@@ -157,7 +157,7 @@ public class CompanyController {
         model.addAttribute("valuesPieChartAge", companyService.obtenerNumeroClientesPorEdad(company));
         model.addAttribute("valuesPieChartAppointmentsLabour", companyService.obtenerTotalReservasPorServicio(company));
         model.addAttribute("labelsPieChartAppointmentsLabour", companyService.obtenerServicios(company));
-        model.addAttribute("", companyService.obtenerServicios(company));
+        model.addAttribute("historicalAppointments", companyService.obtenerHistoricoReservas(company));
         return "estadisticas";
     }
 }

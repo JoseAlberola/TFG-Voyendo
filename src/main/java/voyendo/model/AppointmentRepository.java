@@ -2,6 +2,10 @@ package voyendo.model;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import voyendo.controller.graficos.HistoricoReservasGrafico;
+
+import java.util.Date;
+import java.util.List;
 
 public interface AppointmentRepository extends CrudRepository<Appointment, Long> {
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM APPOINTMENTS WHERE date BETWEEN CURDATE() - INTERVAL 1 MONTH " +
@@ -60,4 +64,19 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Long>
 
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM APPOINTMENTS WHERE company_id = ?1 AND labour_id = ?2")
     int totalReservasPorServicio(Long idCompany, Long idLabour);
+
+    @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 AND labour_id = ?2 ORDER BY DATE")
+    List<Date> fechasReservasPorServicio(Long idCompany, Long idLabour);
+
+    @Query(nativeQuery = true, value = "SELECT  COUNT(*) as total FROM APPOINTMENTS WHERE company_id = ?1 AND labour_id = ?2 " +
+            "GROUP BY year(DATE), MONTH(DATE) ORDER BY year(DATE), MONTH(DATE)")
+    List<Integer> reservasPorServicioMes(Long idCompany, Long idLabour);
+
+    @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 ORDER BY DATE LIMIT 1")
+    Date fechaPrimeraReserva(Long idCompany);
+
+    @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 ORDER BY DATE DESC LIMIT 1")
+    Date fechaUltimaReserva(Long idCompany);
+
+
 }
