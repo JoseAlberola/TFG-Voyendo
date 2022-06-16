@@ -3,12 +3,12 @@ package voyendo.controller.graficos;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class TraceHistoricoReservasGrafico {
+public class TraceHistoricoGrafico {
     String name;
     ArrayList<Date> fechas;
     ArrayList<Integer> valores;
 
-    public TraceHistoricoReservasGrafico(String name, ArrayList<Date> fechas, ArrayList<Integer> valores) {
+    public TraceHistoricoGrafico(String name, ArrayList<Date> fechas, ArrayList<Integer> valores) {
         this.name = name;
         this.fechas = fechas;
         this.valores = valores;

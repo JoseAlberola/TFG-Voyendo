@@ -1,11 +1,14 @@
 package voyendo.service;
 
 import org.apache.tomcat.jni.Local;
+import org.springframework.core.env.Environment;
+import voyendo.Application;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.graficos.HistoricoNuevosClientesGrafico;
 import voyendo.controller.graficos.HistoricoReservasGrafico;
 import voyendo.controller.ModificarCompanyData;
 import voyendo.controller.RegistroDataCompany;
-import voyendo.controller.graficos.TraceHistoricoReservasGrafico;
+import voyendo.controller.graficos.TraceHistoricoGrafico;
 import voyendo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,9 @@ public class CompanyService {
 
     @Autowired
     ManagerUserSession managerUserSession;
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository, AppointmentRepository appointmentRepository) {
@@ -287,11 +293,11 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public HistoricoReservasGrafico obtenerHistoricoReservas(Company company){
-        ArrayList<TraceHistoricoReservasGrafico> traces = new ArrayList<>();
+        ArrayList<TraceHistoricoGrafico> traces = new ArrayList<>();
         for(Labour servicio : company.getLabours()){
             ArrayList<Date> fechas = procesarFechas(appointmentRepository.fechasReservasPorServicio(company.getId(), servicio.getId()));
             ArrayList<Integer> valores = new ArrayList<>(appointmentRepository.reservasPorServicioMes(company.getId(), servicio.getId()));
-            TraceHistoricoReservasGrafico trace = new TraceHistoricoReservasGrafico(servicio.getName(), fechas, valores);
+            TraceHistoricoGrafico trace = new TraceHistoricoGrafico(servicio.getName(), fechas, valores);
             traces.add(trace);
         }
         Date fechaInicioRango = appointmentRepository.fechaPrimeraReserva(company.getId());
@@ -299,4 +305,54 @@ public class CompanyService {
         HistoricoReservasGrafico grafico = new HistoricoReservasGrafico(traces, fechaInicioRango, fechaFinRango);
         return grafico;
     }
+
+    @Transactional(readOnly = true)
+    public ArrayList<Integer> numeroNuevosClientesIncrementalH2(Long idCompany, ArrayList<Date> fechas){
+        ArrayList<Integer> resultado = new ArrayList<>();
+        int valor = 0;
+        for(Date fecha : fechas){
+            valor += appointmentRepository.totalNewCustomersOnMonthH2(idCompany, fecha.toString());
+            resultado.add(valor);
+        }
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<Integer> numeroNuevosClientesIncrementalMySQL(Long idCompany, ArrayList<Date> fechas){
+        ArrayList<Integer> resultado = new ArrayList<>();
+        int valor = 0;
+        for(Date fecha : fechas){
+            valor += appointmentRepository.totalNewCustomersOnMonthMySQL(idCompany, fecha.toString());
+            resultado.add(valor);
+        }
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public HistoricoNuevosClientesGrafico obtenerHistoricoNuevosClientes(Company company){
+        Date fechaInicioRango = appointmentRepository.fechaPrimeraReserva(company.getId());
+        Date fechaFinRango = appointmentRepository.fechaUltimaReserva(company.getId());
+        ArrayList<Date> fechas = procesarFechas(appointmentRepository.fechasTodasLasReservas(company.getId()));
+        ArrayList<Integer> valores;
+        if(env.getActiveProfiles().length == 0){  // No hay perfil activado. Estamos ejecutando H2-CONSOLE
+            valores = numeroNuevosClientesIncrementalH2(company.getId(), fechas);
+        }else{  // Ejecutamos MySQL
+            valores = numeroNuevosClientesIncrementalMySQL(company.getId(), fechas);
+        }
+        TraceHistoricoGrafico trace = new TraceHistoricoGrafico("Nuevos clientes", fechas, valores);
+        HistoricoNuevosClientesGrafico grafico = new HistoricoNuevosClientesGrafico(trace, fechaInicioRango, fechaFinRango);
+        return grafico;
+    }
+
+    @Transactional
+    public Company premium(Long idCompany, boolean premium) {
+        Company company = companyRepository.findById(idCompany).orElse(null);
+        if (company == null) {
+            throw new CompanyServiceException("No existe empresa con id " + idCompany);
+        }
+        company.setPremium(premium);
+        companyRepository.save(company);
+        return company;
+    }
+
 }

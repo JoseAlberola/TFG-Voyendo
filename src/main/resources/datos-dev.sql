@@ -2,12 +2,18 @@
 INSERT INTO categories (name) VALUES('Categoria');
 INSERT INTO categories (name) VALUES('Peluquería');
 INSERT INTO categories (name) VALUES('Clínica');
-INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, category_id)
-    VALUES('company', 'Empresa', 'company@ua', '123', '123456789', 'Aspe', '09:00', '20:00', '2');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+    VALUES('company', 'Empresa', 'company@ua', '123', '123456789', 'Aspe', '09:00', '20:00', 'false', '2');
 INSERT INTO labours (name, duration, price, company_id)
     VALUES('Corte de pelo', '30', '12', '1');
 INSERT INTO labours (name, duration, price, company_id)
     VALUES('Tinte', '60', '24', '1');
+INSERT INTO labours (name, duration, price, company_id)
+VALUES('Corte de pelo y barba', '30', '15', '1');
+INSERT INTO labours (name, duration, price, company_id)
+VALUES('Decoloracion', '60', '20', '1');
+INSERT INTO labours (name, duration, price, company_id)
+VALUES('Peinado', '30', '10', '1');
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
     VALUES('customer1', 'Cliente1', 'cliente@ua', '123', '123456789', 'male', '2000-05-12');
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
@@ -56,8 +62,25 @@ INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
 VALUES('customer23', 'Cliente23', 'cliente@ua', '123', '123456789', 'female', '1950-05-12');
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
 VALUES('customer24', 'Cliente24', 'cliente@ua', '123', '123456789', 'female', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer25', 'Cliente25', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer26', 'Cliente26', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer27', 'Cliente27', 'cliente@ua', '123', '123456789', 'female', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer28', 'Cliente28', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer29', 'Cliente29', 'cliente@ua', '123', '123456789', 'female', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer30', 'Cliente30', 'cliente@ua', '123', '123456789', 'female', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer31', 'Cliente31', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
+INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
+VALUES('customer32', 'Cliente32', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
 
 /* INSERTAMOS RESERVAS EN EMPRESA CON ID 1*/
+
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2021-12-13', 'starthour', 'endhour', '1', '1', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
@@ -74,6 +97,30 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2021-12-23', 'starthour', 'endhour', '1', '7', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2021-12-23', 'starthour', 'endhour', '1', '8', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '12', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '7', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '3', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '11', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '15', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '5', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '4', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '6', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '1', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '2', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '13', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2021-12-23', 'starthour', 'endhour', '1', '13', '5');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-01-03', 'starthour', 'endhour', '1', '9', '2');
@@ -91,6 +138,26 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-01-21', 'starthour', 'endhour', '1', '15', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-01-25', 'starthour', 'endhour', '1', '13', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '9', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '8', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '6', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '11', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '12', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '14', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '3', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '17', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '13', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-01-25', 'starthour', 'endhour', '1', '15', '5');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-02-03', 'starthour', 'endhour', '1', '9', '2');
@@ -114,6 +181,18 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-02-25', 'starthour', 'endhour', '1', '17', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-02-25', 'starthour', 'endhour', '1', '21', '2');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '18', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '11', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '7', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '22', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '20', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-02-25', 'starthour', 'endhour', '1', '25', '5');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-03-03', 'starthour', 'endhour', '1', '2', '1');
@@ -135,6 +214,25 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-03-21', 'starthour', 'endhour', '1', '8', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-03-25', 'starthour', 'endhour', '1', '24', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '4', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '2', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '28', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '26', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '24', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '12', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '16', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '11', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-03-25', 'starthour', 'endhour', '1', '8', '3');
+
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-04-04', 'starthour', 'endhour', '1', '18', '2');
@@ -152,6 +250,12 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-04-21', 'starthour', 'endhour', '1', '3', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-04-25', 'starthour', 'endhour', '1', '5', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-04-25', 'starthour', 'endhour', '1', '1', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-04-25', 'starthour', 'endhour', '1', '2', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-04-25', 'starthour', 'endhour', '1', '29', '5');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-05-04', 'starthour', 'endhour', '1', '17', '2');
@@ -181,6 +285,28 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-05-25', 'starthour', 'endhour', '1', '7', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-05-27', 'starthour', 'endhour', '1', '23', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '25', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '26', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '32', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '13', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '21', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '14', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '9', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '10', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '6', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '14', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-05-27', 'starthour', 'endhour', '1', '23', '5');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-06-03', 'starthour', 'endhour', '1', '7', '1');
@@ -194,6 +320,22 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-06-17', 'starthour', 'endhour', '1', '8', '2');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-06-20', 'starthour', 'endhour', '1', '16', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '5', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '17', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '24', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '31', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '29', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '12', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '6', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-06-20', 'starthour', 'endhour', '1', '1', '4');
 
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-07-04', 'starthour', 'endhour', '1', '7', '1');
@@ -229,3 +371,27 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-07-25', 'starthour', 'endhour', '1', '4', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
 VALUES('2022-07-25', 'starthour', 'endhour', '1', '12', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '2', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '3', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '4', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '30', '3');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '29', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '28', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '27', '4');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '26', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '25', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '31', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '32', '5');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id)
+VALUES('2022-07-25', 'starthour', 'endhour', '1', '19', '5');

@@ -31,6 +31,7 @@ public class Company implements Serializable {
     private String address;
     private String startday;
     private String finishday;
+    private boolean premium;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -141,6 +142,14 @@ public class Company implements Serializable {
 
     public void setFinishday(String finishday) {
         this.finishday = finishday;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public void setPremium(boolean premium) {
+        this.premium = premium;
     }
 
     public Set<Appointment> getAppointments() {

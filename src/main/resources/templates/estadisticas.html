@@ -143,9 +143,35 @@
     <br/>
     <div class="row">
         <div class="col-md-6">
-            <div id='line'></div>
+            <div id='historicalAppointmentsGraph'></div>
+        </div>
+        <div class="col-md-6">
+            <div id='historicalNewCustomersGraph'></div>
         </div>
     </div>
+    <br/>
+    <h4 class="title-section">PREMIUM</h4>
+    <div class="row">
+        <div th:if="${!company.isPremium()}" class="col-md-12">
+            <div style="background-color: white">
+                <div style="padding: 20px">
+                    <h5>Analiza cómo mejorar</h5><br/>
+                    <p>Activa la cesión de datos al sistema y posiciónate como líder en tu sector.</p>
+                    <p>Obtendrás estadísticas más completas que te permitirán detectar el siguiente paso que necesita tu negocio.</p>
+                    <p>Todo gracias a la red de negocios que han decidido unirse compartiendo sus datos.</p>
+                    <form class="form-inline" method="post" th:action="@{/companies/{id}/premium(id=${company.id})}"
+                          th:object="${premiumData}">
+                        <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="premium" name="premium">
+                            <label class="custom-control-label" for="premium">Compartir</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary my-1 btn-compartir">OK</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
 </div>
 
 
@@ -167,9 +193,14 @@
     // Line Chart Historial Appointments
     var historialAppointmentsGraph = [[${historicalAppointments}]]
     var servicios = [[${historicalAppointments.getServicios()}]];
+
+    // Line Chart Historial New Customers
+    var historialNewCustomersGraph = [[${historicalNewCustomers}]]
+
 </script>
-<script th:src="@{/js/historicalAppointments.js}"></script>
 <script th:src="@{/js/pies.js}"></script>
+<script th:src="@{/js/historicalAppointments.js}"></script>
+<script th:src="@{/js/historicalNewCustomers.js}"></script>
 
 <div th:replace="fragments::javascript"/>
 </body>

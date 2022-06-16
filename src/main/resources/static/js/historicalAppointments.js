@@ -1,6 +1,5 @@
 function crearNameTrace(i){
     if(i < servicios.length){
-        console.log(servicios[i].name);
         return servicios[i].name;
     }else{
         return "";
@@ -9,7 +8,6 @@ function crearNameTrace(i){
 
 function crearFechasTrace(i){
     if(i < servicios.length){
-        console.log(servicios[i].fechas);
         return servicios[i].fechas;
     }else{
         return [];
@@ -18,7 +16,6 @@ function crearFechasTrace(i){
 
 function crearValoresTrace(i){
     if(i < servicios.length){
-        console.log(servicios[i].valores);
         return servicios[i].valores;
     }else{
         return [];
@@ -27,45 +24,45 @@ function crearValoresTrace(i){
 
 var trace1 = {
     type: "scatter",
-    mode: "lines",
+    mode: "lines+markers",
     name: crearNameTrace(0),
     x: crearFechasTrace(0),
     y: crearValoresTrace(0),
-    line: {color: '#17BECF'}
+    line: {color: '#0062cc'}
 }
 
 var trace2 = {
     type: "scatter",
-    mode: "lines",
+    mode: "lines+markers",
     name: crearNameTrace(1),
     x: crearFechasTrace(1),
     y: crearValoresTrace(1),
-    line: {color: '#7F7F7F'}
+    line: {color: '#003D80'}
 }
 
 var trace3 = {
     type: "scatter",
-    mode: "lines",
+    mode: "lines+markers",
     name: crearNameTrace(2),
     x: crearFechasTrace(2),
     y: crearValoresTrace(2),
-    line: {color: '#7F7F7F'}
+    line: {color: "#306DAF"}
 }
 var trace4 = {
     type: "scatter",
-    mode: "lines",
+    mode: "lines+markers",
     name: crearNameTrace(3),
     x: crearFechasTrace(3),
     y: crearValoresTrace(3),
-    line: {color: '#7F7F7F'}
+    line: {color: '#609ddf'}
 }
 var trace5 = {
     type: "scatter",
-    mode: "lines",
+    mode: "lines+markers",
     name: crearNameTrace(4),
     x: crearFechasTrace(4),
     y: crearValoresTrace(4),
-    line: {color: '#7F7F7F'}
+    line: {color: '#BFD8F2'}
 }
 var data = [trace1,trace2,trace3,trace4,trace5];
 
@@ -109,4 +106,4 @@ var layout = {
 
 var config = {locale: 'es'};
 
-Plotly.newPlot('line', data, layout, config);
+Plotly.newPlot('historicalAppointmentsGraph', data, layout, config);

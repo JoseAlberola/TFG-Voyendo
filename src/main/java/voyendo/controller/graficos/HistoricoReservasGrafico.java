@@ -3,41 +3,23 @@ package voyendo.controller.graficos;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class HistoricoReservasGrafico {
-    private ArrayList<TraceHistoricoReservasGrafico> servicios;
-    private Date inicioRango;
-    private Date finRango;
+public class HistoricoReservasGrafico extends HistoricoGrafico {
+    private ArrayList<TraceHistoricoGrafico> servicios;
 
     public HistoricoReservasGrafico() {
+        super();
     }
 
-    public HistoricoReservasGrafico(ArrayList<TraceHistoricoReservasGrafico> servicios, Date inicioRango, Date finRango) {
+    public HistoricoReservasGrafico(ArrayList<TraceHistoricoGrafico> servicios, Date inicioRango, Date finRango) {
+        super(inicioRango, finRango);
         this.servicios = servicios;
-        this.inicioRango = inicioRango;
-        this.finRango = finRango;
     }
 
-    public ArrayList<TraceHistoricoReservasGrafico> getServicios() {
+    public ArrayList<TraceHistoricoGrafico> getServicios() {
         return servicios;
     }
 
-    public void setServicios(ArrayList<TraceHistoricoReservasGrafico> servicios) {
+    public void setServicios(ArrayList<TraceHistoricoGrafico> servicios) {
         this.servicios = servicios;
-    }
-
-    public Date getInicioRango() {
-        return inicioRango;
-    }
-
-    public void setInicioRango(Date inicioRango) {
-        this.inicioRango = inicioRango;
-    }
-
-    public Date getFinRango() {
-        return finRango;
-    }
-
-    public void setFinRango(Date finRango) {
-        this.finRango = finRango;
     }
 }

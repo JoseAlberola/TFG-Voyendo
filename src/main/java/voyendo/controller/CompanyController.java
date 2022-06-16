@@ -4,7 +4,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.exception.CompanyNotFoundException;
-import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Category;
 import voyendo.model.Company;
 import voyendo.service.CategoryService;
@@ -54,7 +53,7 @@ public class CompanyController {
 
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CompanyNotFoundException();
         }
         Iterable<Category> categorias = categoryService.findAll();
         model.addAttribute("categorias", categorias);
@@ -142,13 +141,25 @@ public class CompanyController {
         return "redirect:/companies/" + idCompany + "/cuenta";
     }
 
+    @PostMapping("/companies/{id}/premium")
+    public String premium(@PathVariable(value="id") Long idCompany, @ModelAttribute PremiumData premiumData,
+                                  Model model, HttpSession session) {
+        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
+        Company company = companyService.findById(idCompany);
+        if (company == null) {
+            throw new CompanyNotFoundException();
+        }
+        companyService.premium(idCompany, premiumData.isPremium());
+        return "redirect:/companies/" + idCompany + "/estadisticas";
+    }
+
     @GetMapping("/companies/{id}/estadisticas")
     public String estadisticas(@PathVariable(value="id") Long idCompany, Model model, HttpSession session) {
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);
 
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CompanyNotFoundException();
         }
         model.addAttribute("company", company);
 
@@ -158,6 +169,7 @@ public class CompanyController {
         model.addAttribute("valuesPieChartAppointmentsLabour", companyService.obtenerTotalReservasPorServicio(company));
         model.addAttribute("labelsPieChartAppointmentsLabour", companyService.obtenerServicios(company));
         model.addAttribute("historicalAppointments", companyService.obtenerHistoricoReservas(company));
+        model.addAttribute("historicalNewCustomers", companyService.obtenerHistoricoNuevosClientes(company));
         return "estadisticas";
     }
 }
