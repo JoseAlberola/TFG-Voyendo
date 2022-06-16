@@ -39,23 +39,26 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="formCrear" action="">
+                <form id="formCrear" method="post"
+                      th:action="@{/companies/{idCompany}/appointments/nuevo(idCompany=${company.id})}"
+                      th:object="${crearAppointmentData}">
                     <div class="modal-body">
                         <div class="form-row">
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Username / Nombre">
+                                <input id="username" type="text" class="form-control" name="username" placeholder="Username / Nombre" required>
                             </div>
                         </div>
                         <br>
                         <div class="form-row">
                             <div class="col">
-                                <input id="start" type="date" class="form-control" placeholder="Fecha">
+                                <input id="start" type="date" class="form-control" name="start" placeholder="Fecha" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger">Eliminar</button>
+                        <button id="btnAceptar" type="submit" class="btn btn-primary">Aceptar</button>
                     </div>
                 </form>
             </div>

@@ -42,23 +42,19 @@ public class AppointmentController {
         return "formNuevaTarea";
     }
 
-    /*
-    @PostMapping("/usuarios/{id}/tareas/nueva")
-    public String nuevaCita(@PathVariable(value="id") Long idCompany, @ModelAttribute AppointmentData appointmentData,
-                             Model model, RedirectAttributes flash,
-                             HttpSession session) {
+    @PostMapping("/companies/{idCompany}/appointments/nuevo")
+    public String nuevaCita(@PathVariable(value="idCompany") Long idCompany,
+                            @ModelAttribute CrearAppointmentData crearAppointmentData, Model model,
+                            RedirectAttributes flash, HttpSession session) {
 
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);
-
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CompanyNotFoundException();
         }
-        appointmentService.nuevaCitaEmpresa(idCompany, appointmentData.getDate());
-        flash.addFlashAttribute("mensaje", "Cita creada correctamente");
-        return "redirect:/usuarios/" + idCompany + "/tareas";
+        System.out.println("JOSELITO");
+        return "redirect:/companies/1/home";
      }
-     */
 
      /*
     @GetMapping("/usuarios/{id}/tareas")

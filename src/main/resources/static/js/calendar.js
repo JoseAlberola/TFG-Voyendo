@@ -1,4 +1,5 @@
 var modalCrearCita = new bootstrap.Modal(document.getElementById('modalCrear'));
+let frm = document.getElementById("formCrear");
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
