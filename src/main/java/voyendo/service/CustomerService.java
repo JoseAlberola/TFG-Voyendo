@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.RegistroDataCompany;
-import voyendo.controller.RegistroDataCustomer;
+import voyendo.controller.Data.RegistroDataCustomer;
 import voyendo.model.*;
 
 import java.util.Optional;

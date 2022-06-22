@@ -1,6 +1,7 @@
 package voyendo.controller;
 
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.CategoryData;
 import voyendo.controller.exception.EquipoNotFoundException;
 import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Category;

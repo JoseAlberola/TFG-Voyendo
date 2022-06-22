@@ -8,8 +8,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "appointments")
+@Entity(name = "appointments")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="appointment_type", discriminatorType = DiscriminatorType.INTEGER)
 public class Appointment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,11 +34,13 @@ public class Appointment implements Serializable {
     private Company company;
 
     // Relación muchos-a-uno entre servicios y clientes
+    /*
     @NotNull
     @ManyToOne
     @JoinColumn(name = "customer_id")
     @JsonBackReference
     private Customer customer;
+     */
 
     @NotNull
     @ManyToOne
@@ -49,17 +52,15 @@ public class Appointment implements Serializable {
     // Lo hacemos privado para que no se pueda usar desde el código de la aplicación. Para crear un
     // usuario en la aplicación habrá que llamar al constructor público. Hibernate sí que lo puede usar, a pesar
     // de ser privado.
-    private Appointment() {}
+    public Appointment() {}
 
     // Al crear un servicio lo asociamos automáticamente a una
     // compñía. Actualizamos por tanto la lista de servicios de la
     // compañía.
-    public Appointment(Date date, Company company, Customer customer, Labour labour) {
+    public Appointment(Date date, Company company, Labour labour) {
         this.date = date;
         this.company = company;
         company.getAppointments().add(this);
-        this.customer = customer;
-        customer.getAppointments().add(this);
         this.labour = labour;
         labour.getAppointments().add(this);
     }
@@ -104,14 +105,6 @@ public class Appointment implements Serializable {
         this.company = company;
     }
 
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
     public Labour getLabour() {
         return labour;
     }
@@ -129,12 +122,12 @@ public class Appointment implements Serializable {
             // Si tenemos los ID, comparamos por ID
             return Objects.equals(id, appointment.id);
         // sino comparamos por campos obligatorios
-        return date.equals(appointment.date) && company.equals(appointment.company) && customer.equals(appointment.customer)
+        return date.equals(appointment.date) && company.equals(appointment.company)
                 && labour.equals(appointment.labour);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, company, customer, labour);
+        return Objects.hash(date, company, labour);
     }
 }

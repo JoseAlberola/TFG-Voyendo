@@ -1,6 +1,11 @@
 package voyendo.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.util.MultiValueMap;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.AppointmentData;
+import voyendo.controller.Data.CrearAppointmentData;
+import voyendo.controller.exception.AppointmentNotFoundException;
 import voyendo.controller.exception.CompanyNotFoundException;
 import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Appointment;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 public class AppointmentController {
@@ -28,104 +34,80 @@ public class AppointmentController {
     ManagerUserSession managerUserSession;
 
 
-    @GetMapping("/usuarios/{id}/tareas/nueva")
-    public String formNuevaCita(@PathVariable(value="id") Long idCompany,
-                                @ModelAttribute AppointmentData appointmentData, Model model,
-                                HttpSession session) {
-
-        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
-        Company company = companyService.findById(idCompany);
-        if (company == null) {
-            throw new UsuarioNotFoundException();
-        }
-        model.addAttribute("usuario", company);
-        return "formNuevaTarea";
-    }
-
     @PostMapping("/companies/{idCompany}/appointments/nuevo")
     public String nuevaCita(@PathVariable(value="idCompany") Long idCompany,
                             @ModelAttribute CrearAppointmentData crearAppointmentData, Model model,
-                            RedirectAttributes flash, HttpSession session) {
+                            RedirectAttributes redirectAttr, HttpSession session) {
 
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);
         Company company = companyService.findById(idCompany);
         if (company == null) {
             throw new CompanyNotFoundException();
         }
-        System.out.println("JOSELITO");
-        return "redirect:/companies/1/home";
+
+        System.out.println(company);
+        if(crearAppointmentData.getIdappointment() == 0){  // Crear cita
+            if(!appointmentService.nuevaReserva(company, crearAppointmentData)){
+                redirectAttr.addFlashAttribute("error", "No se ha podido crear la reserva.");
+            }else{
+                redirectAttr.addFlashAttribute("exito", "Reserva creada.");
+            }
+        }else{  // Modificar cita
+            if(!appointmentService.modificarCita(company, crearAppointmentData)){
+                redirectAttr.addFlashAttribute("error", "No se ha podido modificar la reserva.");
+            }else{
+                redirectAttr.addFlashAttribute("exito", "Reserva modificada.");
+            }
+        }
+        return "redirect:/companies/" + idCompany + "/home";
      }
 
-     /*
-    @GetMapping("/usuarios/{id}/tareas")
-    public String listadoCitas(@PathVariable(value="id") Long idCompany, Model model, HttpSession session) {
-
-        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
-
-        Company company = companyService.findById(idCompany);
-        if (company == null) {
-            throw new UsuarioNotFoundException();
-        }
-        List<Appointment> appointments = appointmentService.allCitasEmpresa(idCompany);
-        model.addAttribute("usuario", company);
-        model.addAttribute("tareas", appointments);
-        return "home";
-    }
-     */
-
-    @GetMapping("/tareas/{id}/editar")
-    public String formEditaCita(@PathVariable(value="id") Long idAppointment, @ModelAttribute AppointmentData appointmentData,
-                                 Model model, HttpSession session) {
-
-        Appointment appointment = appointmentService.findById(idAppointment);
-        if (appointment == null) {
-            throw new CompanyNotFoundException();
-        }
-
-        managerUserSession.comprobarUsuarioLogeado(session, appointment.getCompany().getId());
-
-        Company company = companyService.findById(appointment.getCompany().getId());
-        if (company == null) {
-            throw new UsuarioNotFoundException();
-        }
-
-        model.addAttribute("usuario", company);
-        model.addAttribute("tarea", appointment);
-        appointmentData.setDate(appointment.getDate());
-        return "formEditarTarea";
-    }
-
-    @PostMapping("/tareas/{id}/editar")
-    public String grabaCitaModificada(@PathVariable(value="id") Long idAppointment, @ModelAttribute AppointmentData appointmentData,
-                                       Model model, RedirectAttributes flash, HttpSession session) {
-        Appointment appointment = appointmentService.findById(idAppointment);
-        if (appointment == null) {
-            throw new CompanyNotFoundException();
-        }
-
-        Long idCompany = appointment.getCompany().getId();
-
-        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
-
-        appointmentService.modificaCita(idAppointment, appointmentData.getDate());
-        flash.addFlashAttribute("mensaje", "Cita modificada correctamente");
-        return "redirect:/usuarios/" + appointment.getCompany().getId() + "/tareas";
-    }
-
-    @DeleteMapping("/tareas/{id}")
+    @DeleteMapping("/companies/{idCompany}/appointments/{idAppointment}/eliminar")
     @ResponseBody
     // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
     // de la petición HTTP, en lugar de una plantilla thymeleaf
-    public String borrarCita(@PathVariable(value="id") Long idAppointment, RedirectAttributes flash, HttpSession session) {
+    public String eliminarReserva(@PathVariable(value="idCompany") Long idCompany,
+                               @PathVariable(value="idAppointment") Long idAppointment, Model model,
+                                  RedirectAttributes redirectAttr, HttpSession session) {
         Appointment appointment = appointmentService.findById(idAppointment);
         if (appointment == null) {
+            throw new AppointmentNotFoundException();
+        }
+
+        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
+
+        appointmentService.eliminarReserva(idAppointment);
+
+        return "";
+    }
+
+    @PostMapping("/appointments/{idAppointment}/mover")
+    public String moverCita(@PathVariable(value="idAppointment") Long idAppointment,
+                            Model model, @RequestBody JsonNode payload, RedirectAttributes redirectAttr, HttpSession session) {
+
+        Appointment appointment = appointmentService.findById(idAppointment);
+        if (appointment == null) {
+            throw new AppointmentNotFoundException();
+        }
+
+        Long idCompany = appointment.getCompany().getId();
+        managerUserSession.comprobarUsuarioLogeado(session, idCompany);
+        Company company = companyService.findById(idCompany);
+        if (company == null) {
             throw new CompanyNotFoundException();
         }
 
-        managerUserSession.comprobarUsuarioLogeado(session, appointment.getCompany().getId());
+        String nuevaFecha = payload.get("date").asText();
+        String nuevaHoraInicio = payload.get("starthour").asText();
+        String nuevaHoraFin = payload.get("endhour").asText();
 
-        appointmentService.borraCita(idAppointment);
-        return "";
+        if(appointmentService.moverReserva(idAppointment, nuevaFecha, nuevaHoraInicio, nuevaHoraFin)){
+            redirectAttr.addFlashAttribute("exito", "Reserva movida de fecha.");
+        }else{
+            redirectAttr.addFlashAttribute("error", "No se ha podido mover la reserva.");
+        }
+
+        return "redirect:/companies/" + idCompany + "/home";
     }
 }
 

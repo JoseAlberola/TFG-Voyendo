@@ -1,4 +1,4 @@
-package voyendo.controller;
+package voyendo.controller.Data;
 
 public class PremiumData {
     private boolean premium;

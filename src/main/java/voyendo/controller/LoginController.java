@@ -1,6 +1,9 @@
 package voyendo.controller;
 
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.LoginData;
+import voyendo.controller.Data.RegistroDataCompany;
+import voyendo.controller.Data.RegistroDataCustomer;
 import voyendo.model.Company;
 import voyendo.model.Customer;
 import voyendo.service.CompanyService;

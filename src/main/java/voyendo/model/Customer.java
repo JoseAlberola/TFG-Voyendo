@@ -40,7 +40,7 @@ public class Customer implements Serializable {
     // que la relación pueda traer a memoria una gran cantidad de entidades
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @JsonManagedReference
-    Set<Appointment> appointments = new HashSet<>();
+    Set<NormalAppointment> appointments = new HashSet<>();
 
     // Constructor vacío necesario para JPA/Hibernate.
     // Lo hacemos privado para que no se pueda usar desde el código de la aplicación. Para crear un
@@ -121,11 +121,11 @@ public class Customer implements Serializable {
         this.birthday = birthday;
     }
 
-    public Set<Appointment> getAppointments() {
+    public Set<NormalAppointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(Set<Appointment> appointments) {
+    public void setAppointments(Set<NormalAppointment> appointments) {
         this.appointments = appointments;
     }
 

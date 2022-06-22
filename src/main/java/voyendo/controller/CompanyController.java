@@ -3,6 +3,8 @@ package voyendo.controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.ModificarCompanyData;
+import voyendo.controller.Data.PremiumData;
 import voyendo.controller.exception.CompanyNotFoundException;
 import voyendo.model.Category;
 import voyendo.model.Company;

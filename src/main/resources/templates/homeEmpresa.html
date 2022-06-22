@@ -6,12 +6,11 @@
 </head>
 
 <style>
-    #calendar-container {
-        position: fixed;
-        top: 100px;
-        left: 40px;
-        right: 40px;
-        bottom: 0;
+    #tooltip1{
+        color: black;
+    }
+    #tooltip2{
+        color: black;
     }
 </style>
 
@@ -23,8 +22,8 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div id="calendar-container">
-                <div id='calendar' style="height: 100%"></div>
+            <div id="calendar-container" style="margin-top: 40px; padding-right: 20px; padding-left: 20px; padding-bottom: 40px">
+                <div id='calendar'></div>
             </div>
         </div>
     </div>
@@ -34,7 +33,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Crear cita</h5>
+                    <h5 class="modal-title" id="tituloModal"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -45,25 +44,49 @@
                     <div class="modal-body">
                         <div class="form-row">
                             <div class="col">
-                                <input id="username" type="text" class="form-control" name="username" placeholder="Username / Nombre" required>
+                                <label for="username" class="form-label">
+                                    <a id="tooltip1" href="#" data-toggle="tooltip" title="Tiene cuenta">Nombre de usuario</a>
+                                    &nbsp;/&nbsp;
+                                    <a id="tooltip2" href="#" data-toggle="tooltip" title="NO tiene cuenta">Nombre invitado</a>
+                                </label>
+                                <input id="idappointment" type="hidden" class="form-control" name="idappointment">
+                                <input id="username" type="text" class="form-control" name="username" required>
                             </div>
                         </div>
                         <br>
                         <div class="form-row">
                             <div class="col">
+                                <label for="start" class="form-label">Fecha</label>
                                 <input id="start" type="date" class="form-control" name="start" placeholder="Fecha" required>
                             </div>
+                            <div class="col">
+                                <label for="starthour" class="form-label">Hora</label>
+                                <input id="starthour" type="time" class="form-control" name="starthour" required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="idlabour" class="form-label">Servicio</label>
+                                    <select id="idlabour" class="form-control" name="idlabour" required>
+                                        <option th:each="servicio: ${company.getLabours()}" th:value="${servicio.id}" th:text="${servicio.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger">Eliminar</button>
+                        <button id="btnEliminar" type="button" th:onclick="'del()'" class="btn btn-danger">Eliminar</button>
                         <button id="btnAceptar" type="submit" class="btn btn-primary">Aceptar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
 
     <!-- Modal primer inicio sesión -->
@@ -88,22 +111,75 @@
 </div>
 
 <div th:replace="fragments::javascript"/>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+
+<script th:inline="javascript">
+    var horaApertura = [[${company.getStartday()}]];
+    var horaCierre = [[${company.getFinishday()}]];
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    var error = [[${error}]];
+    if(error != null && error !== ''){
+        swalWithBootstrapButtons.fire(
+            'Error',
+            error,
+            'error'
+        )
+    }
+
+    var exito = [[${exito}]];
+    if(exito != null && exito !== ''){
+        swalWithBootstrapButtons.fire(
+            '¡Hecho!',
+            exito,
+            'success'
+        )
+    }
+
+    function del() {
+        var idCita = document.getElementById("idappointment").value;
+        var url = "/companies/" + [[${company.getId()}]] + "/appointments/" + idCita + "/eliminar";
+
+        Swal.fire({
+            title: 'Advertencia',
+            text: "¿Estás seguro de eliminar la reserva?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(url, {
+                    method: 'DELETE',
+                }).then((res) => location.reload());
+            }
+        })
+    }
+
+    window.onload = function() {
+        if([[${company.category.name}]] === "Categoria" || [[${company.startday}]] == null || [[${company.finishday}]] == null){
+            $('#staticBackdrop').modal('show');
+        }
+        var tooltip1 = document.getElementById("tooltip1");
+        new bootstrap.Tooltip(tooltip1);
+        var tooltip2 = document.getElementById("tooltip2");
+        new bootstrap.Tooltip(tooltip2);
+    };
+    var reservas =[[${reservasCalendario}]];
+</script>
 <script th:src="@{/js/main.min.js}"></script>
 <script th:src="@{/js/es.js}"></script>
 <script th:src="@{/js/calendar.js}"></script>
 
-<script th:inline="javascript">
-    window.onload = function() {
-        /*
-        if([[${company.category.name}]] === "Categoria"){
-            $('#staticBackdrop').modal('show');
-        }
-         */
-        if([[${company.category.name}]] === "Categoria" || [[${company.startday}]] == null || [[${company.finishday}]] == null){
-            $('#staticBackdrop').modal('show');
-        }
-    };
-</script>
 
 </body>
 </html>

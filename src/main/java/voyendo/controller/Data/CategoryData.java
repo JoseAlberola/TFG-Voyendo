@@ -1,4 +1,4 @@
-package voyendo.controller;
+package voyendo.controller.Data;
 
 public class CategoryData {
     private String nombre;

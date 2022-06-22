@@ -1,13 +1,12 @@
 package voyendo.service;
 
-import org.apache.tomcat.jni.Local;
 import org.springframework.core.env.Environment;
-import voyendo.Application;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.graficos.HistoricoNuevosClientesGrafico;
 import voyendo.controller.graficos.HistoricoReservasGrafico;
-import voyendo.controller.ModificarCompanyData;
-import voyendo.controller.RegistroDataCompany;
+import voyendo.controller.Data.ModificarCompanyData;
+import voyendo.controller.Data.RegistroDataCompany;
 import voyendo.controller.graficos.TraceHistoricoGrafico;
 import voyendo.model.*;
 import org.slf4j.Logger;
@@ -16,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
@@ -39,7 +39,8 @@ public class CompanyService {
     private Environment env;
 
     @Autowired
-    public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository, AppointmentRepository appointmentRepository) {
+    public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository,
+                          AppointmentRepository appointmentRepository) {
         this.companyRepository = companyRepository;
         this.categoryRepository = categoryRepository;
         this.appointmentRepository = appointmentRepository;
@@ -223,15 +224,8 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public int[] obtenerNumeroClientesPorGenero(Company company){
-        int contadorHombres = 0;
-        int contadorMujeres = 0;
-        for(Appointment reserva : company.getAppointments()){
-            if(reserva.getCustomer().getGender().equals("male")){
-                contadorHombres++;
-            }else {
-                contadorMujeres++;
-            }
-        }
+        int contadorHombres = appointmentRepository.numeroClientesHombres(company.getId());
+        int contadorMujeres = appointmentRepository.numeroClientesMujeres(company.getId());
         return new int[] {contadorHombres, contadorMujeres};
     }
 
@@ -353,6 +347,11 @@ public class CompanyService {
         company.setPremium(premium);
         companyRepository.save(company);
         return company;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> obtenerReservas(Company company){
+        return appointmentRepository.listarReservasEmpresa(company.getId());
     }
 
 }
