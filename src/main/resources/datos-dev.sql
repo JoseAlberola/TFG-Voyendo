@@ -2,18 +2,21 @@
 INSERT INTO categories (name) VALUES('Categoria');
 INSERT INTO categories (name) VALUES('Peluquería');
 INSERT INTO categories (name) VALUES('Clínica');
+
 INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
-    VALUES('company', 'Empresa', 'company@ua', '123', '123456789', 'Aspe', '09:00', '20:00', 'false', '2');
-INSERT INTO labours (name, duration, price, company_id)
-    VALUES('Corte de pelo', '30', '12', '1');
-INSERT INTO labours (name, duration, price, company_id)
-    VALUES('Tinte', '60', '24', '1');
-INSERT INTO labours (name, duration, price, company_id)
-VALUES('Corte de pelo y barba', '30', '15', '1');
-INSERT INTO labours (name, duration, price, company_id)
-VALUES('Decoloracion', '60', '20', '1');
-INSERT INTO labours (name, duration, price, company_id)
-VALUES('Peinado', '30', '10', '1');
+VALUES('company', 'Empresa', 'company@ua', '123', '123456789', 'Aspe', '09:00', '20:00', 'false', '2');
+
+INSERT INTO labours (name, duration, price, activated, company_id)
+VALUES('Corte de pelo', '30', '12', 'true', '1');
+INSERT INTO labours (name, duration, price, activated, company_id)
+VALUES('Tinte', '60', '24', 'true', '1');
+INSERT INTO labours (name, duration, price, activated, company_id)
+VALUES('Corte de pelo y barba', '30', '15', 'true', '1');
+INSERT INTO labours (name, duration, price, activated, company_id)
+VALUES('Decoloracion', '60', '20', 'true', '1');
+INSERT INTO labours (name, duration, price, activated, company_id)
+VALUES('Peinado', '30', '10', 'true', '1');
+
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
     VALUES('customer1', 'Cliente1', 'cliente@ua', '123', '123456789', 'male', '2000-05-12');
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
@@ -79,8 +82,23 @@ VALUES('customer31', 'Cliente31', 'cliente@ua', '123', '123456789', 'male', '202
 INSERT INTO customers (username, name, mail, password, phone, gender, birthday)
 VALUES('customer32', 'Cliente32', 'cliente@ua', '123', '123456789', 'male', '2022-05-12');
 
-/* INSERTAMOS RESERVAS EN EMPRESA CON ID 1*/
+/* INSERTAMOS REVIEWS */
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicio Me ha encantado el servicio Me ha encantado el servicio', '4', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicio', '3', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicio si si si', '1', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicio', '2', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicioole mi tio', '5', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Me ha encantado el servicio', '5', '1', '1');
+INSERT INTO reviews (text, valuation, company_id, customer_id)
+VALUES('Deja mucho que desear, nada profesional', '2', '1', '2');
 
+/* INSERTAMOS RESERVAS EN EMPRESA CON ID 1*/
 INSERT INTO appointments (date, starthour, endhour, company_id, labour_id, appointment_type, customer_id)
 VALUES('2021-12-13', '09:00', '09:30', '1', '1', '1', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id,  labour_id, appointment_type, customer_id)

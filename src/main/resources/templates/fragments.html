@@ -40,12 +40,15 @@
                 <li class="nav-item active">
                     <a class="nav-link contenidoNav" th:href="@{'/companies/' + ${company.getId()} + '/estadisticas'}" >Estadísticas <span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link contenidoNav" th:href="@{'/companies/' + ${company.getId()} + '/servicios'}" >Servicios <span class="sr-only">(current)</span></a>
+                </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle contenidoNav" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${company.getName()}"></a>
+                    <a class="nav-link dropdown-toggle contenidoNav" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${company.getUsername()}"></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" th:href="@{'/companies/' + ${company.getId()} + '/cuenta'}">Mi cuenta</a>
                         <a class="dropdown-item" href="/logout">
-                            <span th:text="'Cerrar sesión ' + ${company.getName()}"></span>
+                            <span>Cerrar sesión</span>
                         </a>
                     </div>
                 </li>
@@ -78,7 +81,7 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="#">Cuenta</a>
                         <a class="dropdown-item" href="/logout">
-                            <span th:text="'Cerrar sesión ' + ${usuario.getName()}"></span>
+                            <span>Cerrar sesión</span>
                         </a>
                     </div>
                 </li>

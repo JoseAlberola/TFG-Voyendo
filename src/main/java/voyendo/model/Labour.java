@@ -1,5 +1,6 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -24,6 +25,8 @@ public class Labour implements Serializable {
     private int duration;
     @NotNull
     private double price;
+    @NotNull
+    private boolean activated;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -33,9 +36,10 @@ public class Labour implements Serializable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonBackReference
     private Company company;
 
-    @OneToMany(mappedBy = "labour", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "labour", fetch = FetchType.LAZY)
     @JsonManagedReference
     Set<Appointment> appointments = new HashSet<>();
 
@@ -46,10 +50,11 @@ public class Labour implements Serializable {
     private Labour() {}
 
     // Constructor público con los atributos obligatorios.
-    public Labour(String name, int duration, double price, Company company) {
+    public Labour(String name, int duration, double price, boolean activated, Company company) {
         this.name = name;
         this.duration = duration;
         this.price = price;
+        this.activated = activated;
         this.company = company;
         company.getLabours().add(this);
     }
@@ -86,6 +91,14 @@ public class Labour implements Serializable {
         this.price = price;
     }
 
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
     public Company getCompany() {
         return company;
     }
@@ -112,12 +125,12 @@ public class Labour implements Serializable {
             return Objects.equals(id, labour.id);
         // sino comparamos por campos obligatorios
         return name.equals(labour.name) && duration == labour.duration && price == labour.price
-                && company.equals(labour.company);
+                && activated == labour.activated && company.equals(labour.company);
     }
 
     @Override
     public int hashCode() {
         // Generamos un hash basado en los campos obligatorios
-        return Objects.hash(name, duration, price, company);
+        return Objects.hash(name, duration, price, activated, company);
     }
 }

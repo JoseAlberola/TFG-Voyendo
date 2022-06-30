@@ -52,7 +52,8 @@ public class HomeEmpresaController {
         }
         model.addAttribute("company", company);
         model.addAttribute("crearAppointmentData", new CrearAppointmentData());
-        List<ReservaCalendario> reservasCalendario = appointmentService.convertirAppointmentsAReservasCalendario(companyService.obtenerReservas(company));
+        List<ReservaCalendario> reservasCalendario =
+                appointmentService.convertirAppointmentsAReservasCalendario(companyService.obtenerReservas(company));
         model.addAttribute("reservasCalendario", reservasCalendario);
         return "homeEmpresa";
     }

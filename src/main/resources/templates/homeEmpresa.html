@@ -70,7 +70,9 @@
                                 <div class="form-group">
                                     <label for="idlabour" class="form-label">Servicio</label>
                                     <select id="idlabour" class="form-control" name="idlabour" required>
-                                        <option th:each="servicio: ${company.getLabours()}" th:value="${servicio.id}" th:text="${servicio.name}"></option>
+                                        <option id="optionDefault" value="" selected>Selecciona servicio</option>
+                                        <option th:each="servicio: ${company.getActivatedLabours()}" class="opcionesDinamicas"
+                                                th:value="${servicio.id}" th:text="${servicio.name}"></option>
                                     </select>
                                 </div>
                             </div>
@@ -116,6 +118,10 @@
 <script th:inline="javascript">
     var horaApertura = [[${company.getStartday()}]];
     var horaCierre = [[${company.getFinishday()}]];
+
+    function servicioActivo(servicio, idLabour){
+        return servicio.isActivated() && servicio.id == idLabour;
+    }
 
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {

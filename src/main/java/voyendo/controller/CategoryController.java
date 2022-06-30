@@ -41,7 +41,7 @@ public class CategoryController {
 
         Iterable<Category> categorias = categoryService.findAllOrderedByName();
         model.addAttribute("equipos", categorias);
-        return "listaEquipos";
+        return "servicios";
     }
 
     @GetMapping("/equipos/nuevo")

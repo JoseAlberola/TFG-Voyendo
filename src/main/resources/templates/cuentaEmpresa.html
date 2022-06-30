@@ -1,186 +1,376 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: head (titulo='Cuenta Empresa')"></head>
+<head>
+    <div th:replace="fragments::head(titulo='Cuenta empresa')"></div>
+    <link rel="stylesheet" href="/css/styleCuentaEmpresa.css">
+</head>
 
 <body>
 
 <div th:replace="fragments::menuLogueadoEmpresa(company=${company})"/>
 
-<div class="container-fluid">
-    <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
-        <span th:text="${mensaje}"></span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
 
-    <div class="accordion mt-3" id="accordionExample">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Información básica
-                    </button>
-                </h2>
-            </div>
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                <div class="card-body">
-                    <form id="infoBasicaForm" method="post" th:action="@{/companies/{id}/modificarInfoBasica(id=${company.getId()})}"
-                          th:object="${modificarCompanyData}">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="username">Nombre de usuario</label>
-                                <input type="text" class="form-control bg-light" id="username" aria-describedby="usernameHelpText"
-                                       name="username" th:field="*{username}" readonly>
-                                <small id="usernameHelpText" class="form-text text-muted">
-                                    No puedes modificar tu nombre de usuario. Todos los clientes te conocerán por el nombre de la empresa.
-                                </small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="name">Nombre de la empresa</label>
-                                <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="mail">Email</label>
-                                <input type="email" class="form-control" id="mail" name="mail" th:field="*{mail}" required>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="phone">Teléfono</label>
-                                <input type="text" class="form-control" id="phone" name="phone" th:field="*{phone}">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="address">Dirección</label>
-                                <input type="text" class="form-control" id="address" name="address" th:field="*{address}">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
-                    </form>
+<div class="container emp-profile">
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" enctype="multipart/form-data" id="formImg1"
+                  th:action="@{/companies/{idCompany}/image/1/upload(idCompany=${company.id})}">
+                <div class="profile-img">
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg1()}}" th:alt="${company.getImg1()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen1"
+                               onchange="imgCambio(1)" required />
+                    </div>
                 </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <div class="profile-head">
+                <span th:text="'@' + ${company.getUsername()}" style="font-size: 18px; font-weight: 550"></span>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${company.getName()}" style="font-size: 20px; font-weight: 400"></span>
+                <p th:text="${company.getAddress()}"></p>
+                <h6 th:text="${company.getCategory().getName()}" class="texto-color mt-3" style="margin-top: 8px; font-size: 18px"></h6>
+                <p class="proile-rating">VALORACIÓN : <span th:text="${valoracionMedia}"></span></p>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Contraseña
-                    </button>
-                </h2>
-            </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                <div class="card-body">
-                    <form id="passwordForm" method="post" th:action="@{/companies/{id}/modificarPassword(id=${company.getId()})}"
-                          th:object="${modificarCompanyData}">
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label for="password">Contraseña actual</label>
-                                <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
-                                       required>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="newPassword">Contraseña nueva</label>
-                                <input type="password" class="form-control" id="newPassword" name="newPassword" th:field="*{newPassword}"
-                                       required>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="confirmNewPassword">Repetir contraseña nueva</label>
-                                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
-                                       th:field="*{confirmNewPassword}" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
-                    </form>
-                </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-work">
+                <form method="post" enctype="multipart/form-data" id="formImg2"
+                      th:action="@{/companies/{idCompany}/image/2/upload(idCompany=${company.id})}">
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg2()}}" th:alt="${company.getImg2()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen2"
+                           onchange="imgCambio(2)" required />
+                    </div>
+                </form>
+                <br><br/>
+                <form method="post" enctype="multipart/form-data" id="formImg3"
+                      th:action="@{/companies/{idCompany}/image/3/upload(idCompany=${company.id})}">
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg3()}}" th:alt="${company.getImg3()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen3"
+                               onchange="imgCambio(3)" required />
+                    </div>
+                </form>
+                <br><br/>
+                <form method="post" enctype="multipart/form-data" id="formImg4"
+                      th:action="@{/companies/{idCompany}/image/4/upload(idCompany=${company.id})}">
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg4()}}" th:alt="${company.getImg4()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen4"
+                               onchange="imgCambio(4)" required />
+                    </div>
+                </form>
+                <br><br/>
+                <form method="post" enctype="multipart/form-data" id="formImg5"
+                      th:action="@{/companies/{idCompany}/image/5/upload(idCompany=${company.id})}">
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg5()}}" th:alt="${company.getImg5()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen5"
+                               onchange="imgCambio(5)" required />
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header" id="headingThree">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Detalles empresa
-                        <span th:if="${company.category.name == 'Categoria'} or ${company.startday == null} or ${company.finishday == null}">
+        <div class="col-md-8 config-comentarios">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Opiniones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Configuración</a>
+                </li>
+            </ul>
+            <div class="tab-content profile-tab" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="card card-reviews mb-4">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                <div class="card-body">
+                                    <h5 class="card-title mt-5">Opiniones</h5>
+                                    <h6 class="card-subtitle">Balance general</h6>
+                                    <h5 class="font-medium mt-5" th:text="${reviews.size()}"></h5>
+                                    <h6 class="card-subtitle">Comentarios totales</h6>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-lg-8 border-left-propio">
+                                <div class="card-body">
+                                    <ul class="list-style-none">
+                                        <li class="mt-4">
+                                            <div class="d-flex align-items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-up mr-3" viewBox="0 0 16 16">
+                                                    <path d="M8.864.046C7.908-.193 7.02.53 6.956 1.466c-.072 1.051-.23 2.016-.428 2.59-.125.36-.479 1.013-1.04 1.639-.557.623-1.282 1.178-2.131 1.41C2.685 7.288 2 7.87 2 8.72v4.001c0 .845.682 1.464 1.448 1.545 1.07.114 1.564.415 2.068.723l.048.03c.272.165.578.348.97.484.397.136.861.217 1.466.217h3.5c.937 0 1.599-.477 1.934-1.064a1.86 1.86 0 0 0 .254-.912c0-.152-.023-.312-.077-.464.201-.263.38-.578.488-.901.11-.33.172-.762.004-1.149.069-.13.12-.269.159-.403.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2.144 2.144 0 0 0-.138-.362 1.9 1.9 0 0 0 .234-1.734c-.206-.592-.682-1.1-1.2-1.272-.847-.282-1.803-.276-2.516-.211a9.84 9.84 0 0 0-.443.05 9.365 9.365 0 0 0-.062-4.509A1.38 1.38 0 0 0 9.125.111L8.864.046zM11.5 14.721H8c-.51 0-.863-.069-1.14-.164-.281-.097-.506-.228-.776-.393l-.04-.024c-.555-.339-1.198-.731-2.49-.868-.333-.036-.554-.29-.554-.55V8.72c0-.254.226-.543.62-.65 1.095-.3 1.977-.996 2.614-1.708.635-.71 1.064-1.475 1.238-1.978.243-.7.407-1.768.482-2.85.025-.362.36-.594.667-.518l.262.066c.16.04.258.143.288.255a8.34 8.34 0 0 1-.145 4.725.5.5 0 0 0 .595.644l.003-.001.014-.003.058-.014a8.908 8.908 0 0 1 1.036-.157c.663-.06 1.457-.054 2.11.164.175.058.45.3.57.65.107.308.087.67-.266 1.022l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.414-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.047.047.109.177.005.488a2.224 2.224 0 0 1-.505.805l-.353.353.353.354c.006.005.041.05.041.17a.866.866 0 0 1-.121.416c-.165.288-.503.56-1.066.56z"/>
+                                                </svg>
+                                                <div>
+                                                    <h5 class="mb-0">Comentarios positivos</h5>
+                                                    <span class="text-muted" th:text="${positiveNumber} + ' Comentarios'"></span></div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                     th:style="'width:' + ( ${reviews.size()} == 0  ? '0' : (${positiveNumber * 1.0} / ${reviews.size()}) * 100.0 ) + '%;'"
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </li>
+                                        <li class="mt-5">
+                                            <div class="d-flex align-items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-down mr-3" viewBox="0 0 16 16">
+                                                    <path d="M8.864 15.674c-.956.24-1.843-.484-1.908-1.42-.072-1.05-.23-2.015-.428-2.59-.125-.36-.479-1.012-1.04-1.638-.557-.624-1.282-1.179-2.131-1.41C2.685 8.432 2 7.85 2 7V3c0-.845.682-1.464 1.448-1.546 1.07-.113 1.564-.415 2.068-.723l.048-.029c.272-.166.578-.349.97-.484C6.931.08 7.395 0 8 0h3.5c.937 0 1.599.478 1.934 1.064.164.287.254.607.254.913 0 .152-.023.312-.077.464.201.262.38.577.488.9.11.33.172.762.004 1.15.069.13.12.268.159.403.077.27.113.567.113.856 0 .289-.036.586-.113.856-.035.12-.08.244-.138.363.394.571.418 1.2.234 1.733-.206.592-.682 1.1-1.2 1.272-.847.283-1.803.276-2.516.211a9.877 9.877 0 0 1-.443-.05 9.364 9.364 0 0 1-.062 4.51c-.138.508-.55.848-1.012.964l-.261.065zM11.5 1H8c-.51 0-.863.068-1.14.163-.281.097-.506.229-.776.393l-.04.025c-.555.338-1.198.73-2.49.868-.333.035-.554.29-.554.55V7c0 .255.226.543.62.65 1.095.3 1.977.997 2.614 1.709.635.71 1.064 1.475 1.238 1.977.243.7.407 1.768.482 2.85.025.362.36.595.667.518l.262-.065c.16-.04.258-.144.288-.255a8.34 8.34 0 0 0-.145-4.726.5.5 0 0 1 .595-.643h.003l.014.004.058.013a8.912 8.912 0 0 0 1.036.157c.663.06 1.457.054 2.11-.163.175-.059.45-.301.57-.651.107-.308.087-.67-.266-1.021L12.793 7l.353-.354c.043-.042.105-.14.154-.315.048-.167.075-.37.075-.581 0-.211-.027-.414-.075-.581-.05-.174-.111-.273-.154-.315l-.353-.354.353-.354c.047-.047.109-.176.005-.488a2.224 2.224 0 0 0-.505-.804l-.353-.354.353-.354c.006-.005.041-.05.041-.17a.866.866 0 0 0-.121-.415C12.4 1.272 12.063 1 11.5 1z"/>
+                                                </svg>
+                                                <div>
+                                                    <h5 class="mb-0">Comentarios negativos</h5>
+                                                    <span class="text-muted" th:text="${negativeNumber} + ' Comentarios'"></span></div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-danger" role="progressbar"
+                                                     th:style="'width:' + ( ${reviews.size()} == 0  ? '0' : (${negativeNumber * 1.0} / ${reviews.size()}) * 100.0 ) + '%;'"
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </li>
+                                        <li class="mt-5 mb-5">
+                                            <div class="d-flex align-items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-emoji-neutral mr-3" viewBox="0 0 16 16">
+                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                    <path d="M4 10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5zm3-4C7 5.672 6.552 5 6 5s-1 .672-1 1.5S5.448 8 6 8s1-.672 1-1.5zm4 0c0-.828-.448-1.5-1-1.5s-1 .672-1 1.5S9.448 8 10 8s1-.672 1-1.5z"/>
+                                                </svg>
+                                                <div>
+                                                    <h5 class="mb-0">Comentarios neutrales</h5>
+                                                    <span class="text-muted" th:text="${neutralNumber} + ' Comentarios'"></span></div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-info" role="progressbar"
+                                                     th:style="'width:' + ( ${reviews.size()} == 0  ? '0' : (${neutralNumber * 1.0} / ${reviews.size()}) * 100.0 ) + '%;'"
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-2" th:each="review, iStat: ${reviewPage.content}">
+                        <div class="card-body m-3">
+                            <div class="row">
+                                <div class="col-lg-3 d-flex justify-content-center align-items-center mb-4 mb-lg-0">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20%2810%29.webp"
+                                         class="rounded-circle img-fluid shadow-1" alt="woman avatar" width="75" height="75" />
+                                </div>
+                                <div class="col-lg-9">
+                                    <p class="text-muted fw-light mb-4" th:text="${review.getText()}"></p>
+                                    <p class="fw-bold lead mb-1"><strong th:text="${review.getValuation()}"></strong>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-star" viewBox="0 0 16 16">
+                                            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                        </svg>
+                                    </p>
+                                    <p class="fw-bold mb-0" th:text="'@' + ${review.getCustomer().getUsername()}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav th:if="${reviewPage.totalPages > 0}" aria-label="Reviews pagination">
+                        <ul class="pagination" style="margin: auto">
+                            <li class="page-item" th:each="pageNumber : ${pageNumbers}">
+                                <a class="page-link"
+                                   th:href="@{/companies/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${pageNumber})}"
+                                   th:text="${pageNumber}"
+                                   ></a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row">
+                        <div class="accordion mt-3 col-md-12" id="accordionExample">
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-block text-left texto-color" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            Información básica
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <form id="infoBasicaForm" method="post" th:action="@{/companies/{id}/modificarInfo(id=${company.getId()})}" th:object="${modificarCompanyData}">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="username">Nombre de usuario</label>
+                                                    <input type="text" class="form-control bg-light" id="username" aria-describedby="usernameHelpText"
+                                                           name="username" th:field="*{username}" readonly>
+                                                    <small id="usernameHelpText" class="form-text text-muted">
+                                                        No puedes modificar tu nombre de usuario. Todos los clientes te conocerán por el nombre de la empresa.
+                                                    </small>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="name">Nombre de la empresa</label>
+                                                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="mail">Email</label>
+                                                    <input type="email" class="form-control" id="mail" name="mail" th:field="*{mail}" required>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="phone">Teléfono</label>
+                                                    <input type="text" class="form-control" id="phone" name="phone" th:field="*{phone}">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-12">
+                                                    <label for="address">Dirección</label>
+                                                    <input type="text" class="form-control" id="address" name="address" th:field="*{address}">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="headingTwo">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Contraseña
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <form id="passwordForm" method="post" th:action="@{/companies/{id}/modificarPassword(id=${company.getId()})}"
+                                              th:object="${modificarCompanyData}">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-4">
+                                                    <label for="password">Contraseña actual</label>
+                                                    <input type="password" class="form-control" id="password" name="password" th:field="*{password}"
+                                                           required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="newPassword">Contraseña nueva</label>
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" th:field="*{newPassword}"
+                                                           required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="confirmNewPassword">Repetir contraseña nueva</label>
+                                                    <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
+                                                           th:field="*{confirmNewPassword}" required>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="headingThree">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            Detalles empresa
+                                            <span th:if="${company.category.name == 'Categoria'} or ${company.startday == null} or ${company.finishday == null}">
                             &nbsp; &nbsp;
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
                             </svg>
                         </span>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                <div class="card-body">
-                    <form id="detallesEmpresaForm" method="post" th:action="@{/companies/{id}/modificarDetallesEmpresa(id=${company.getId()})}"
-                          th:object="${modificarCompanyData}">
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label for="startday">Hora de apertura</label>
-                                <input type="time" step="1800" class="form-control" id="startday" name="startday" th:field="*{startday}"
-                                       required>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="finishday">Hora de cierre</label>
-                                <input type="time" step="1800" class="form-control" id="finishday" name="finishday" th:field="*{finishday}"
-                                       required>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="category">Categoría de negocio</label>
-                                <select id="category" class="form-control" name="category.name" th:field="*{category.name}" required>
-                                    <option th:each="categoria: ${categorias}" th:value="${categoria.name == 'Categoria'} ? '' : ${categoria.name}" th:text="${categoria.name == 'Categoria'} ? 'Selecciona...' : ${categoria.name}"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingFour">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                        Servicios
-                        <span th:if="${company.labours.isEmpty()}">
-                            &nbsp; &nbsp;
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                            </svg>
-                        </span>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
-                <div class="card-body">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label for="namelabour">Nombre</label>
-                                <input type="text" class="form-control" id="namelabour">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="durationlabour">Duración</label>
-                                <input type="text" class="form-control" id="durationlabour">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="pricelabour">Precio</label>
-                                <input type="text" class="form-control" id="pricelabour">
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <form id="detallesEmpresaForm" method="post" th:action="@{/companies/{id}/modificarDetallesEmpresa(id=${company.getId()})}"
+                                              th:object="${modificarCompanyData}">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-4">
+                                                    <label for="startday">Hora de apertura</label>
+                                                    <input type="time" step="1800" class="form-control" id="startday" name="startday" th:field="*{startday}"
+                                                           required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="finishday">Hora de cierre</label>
+                                                    <input type="time" step="1800" class="form-control" id="finishday" name="finishday" th:field="*{finishday}"
+                                                           required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="category">Categoría de negocio</label>
+                                                    <select id="category" class="form-control" name="category.name" th:field="*{category.name}" required>
+                                                        <option th:each="categoria: ${categorias}" th:value="${categoria.name == 'Categoria'} ? '' : ${categoria.name}" th:text="${categoria.name == 'Categoria'} ? 'Selecciona...' : ${categoria.name}"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <div th:replace="fragments::javascript"/>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
 
-<script type="text/javascript">
+<script th:inline="javascript">
+    var formImg1 = document.getElementById("formImg1");
+    var formImg2 = document.getElementById("formImg2");
+    var formImg3 = document.getElementById("formImg3");
+    var formImg4 = document.getElementById("formImg4");
+    var formImg5 = document.getElementById("formImg5");
+
+    function imgCambio(numero){
+        if(numero == 1){
+            formImg1.submit();
+        }else if(numero == 2){
+            formImg2.submit();
+        }else if(numero == 3){
+            formImg3.submit();
+        }else if(numero == 4){
+            formImg4.submit();
+        }else if(numero == 5){
+            formImg5.submit();
+        }
+    }
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    var error = [[${error}]];
+    if(error != null && error !== ''){
+        swalWithBootstrapButtons.fire(
+            'Error',
+            error,
+            'error'
+        )
+    }
+
+    var exito = [[${exito}]];
+    if(exito != null && exito !== ''){
+        swalWithBootstrapButtons.fire(
+            '¡Hecho!',
+            exito,
+            'success'
+        )
+    }
+
     var inputStart = document.getElementById("startday");
     var inputFinish = document.getElementById("finishday");
 
@@ -209,6 +399,7 @@
     inputStart.addEventListener("input", comprobarHoraStart);
     inputFinish.addEventListener("invalid", comprobarHoraFinish);
     inputFinish.addEventListener("input", comprobarHoraFinish);
+
 
     var address = 'address';
 

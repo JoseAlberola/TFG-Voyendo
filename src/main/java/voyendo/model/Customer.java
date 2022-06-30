@@ -42,6 +42,10 @@ public class Customer implements Serializable {
     @JsonManagedReference
     Set<NormalAppointment> appointments = new HashSet<>();
 
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    Set<Review> reviews = new HashSet<>();
+
     // Constructor vacío necesario para JPA/Hibernate.
     // Lo hacemos privado para que no se pueda usar desde el código de la aplicación. Para crear un
     // usuario en la aplicación habrá que llamar al constructor público. Hibernate sí que lo puede usar, a pesar
@@ -127,6 +131,14 @@ public class Customer implements Serializable {
 
     public void setAppointments(Set<NormalAppointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
     }
 
     @Override

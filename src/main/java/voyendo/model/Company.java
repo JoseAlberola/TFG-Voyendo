@@ -1,11 +1,14 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 // import java.util.Date;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -32,6 +35,16 @@ public class Company implements Serializable {
     private String startday;
     private String finishday;
     private boolean premium;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img1;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img2;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img3;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img4;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img5;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -48,10 +61,16 @@ public class Company implements Serializable {
     // Nombre de la columna en la BD que guarda físicamente
     // el ID de la compañía con el que está asociado una categoría
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonManagedReference
     Set<Labour> labours = new HashSet<>();
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    Set<Review> reviews = new HashSet<>();
 
     // @ManyToMany(mappedBy = "usuarios", fetch = FetchType.EAGER)
     // Set<Equipo> equipos = new HashSet<>();
@@ -170,6 +189,107 @@ public class Company implements Serializable {
 
     public void setLabours(Set<Labour> labours) {
         this.labours = labours;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public String getImg1() {
+        return img1;
+    }
+
+    public void setImg1(String img1) {
+        this.img1 = img1;
+    }
+
+    public String getImg2() {
+        return img2;
+    }
+
+    public void setImg2(String img2) {
+        this.img2 = img2;
+    }
+
+    public String getImg3() {
+        return img3;
+    }
+
+    public void setImg3(String img3) {
+        this.img3 = img3;
+    }
+
+    public String getImg4() {
+        return img4;
+    }
+
+    public void setImg4(String img4) {
+        this.img4 = img4;
+    }
+
+    public String getImg5() {
+        return img5;
+    }
+
+    public void setImg5(String img5) {
+        this.img5 = img5;
+    }
+
+    public Set<Labour> getActivatedLabours() {
+        Set resultado = new HashSet();
+        for (Labour labour: labours) {
+            if(labour.isActivated()){
+                resultado.add(labour);
+            }
+        }
+        return resultado;
+    }
+
+    public int getPositiveReviews() {
+        int counter = 0;
+        for (Review review: reviews) {
+            if(review.getValuation() >= 4){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public int getNegativeReviews() {
+        int counter = 0;
+        for (Review review: reviews) {
+            if(review.getValuation() <= 2){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public int getNeutralReviews() {
+        int counter = 0;
+        for (Review review: reviews) {
+            if(review.getValuation() == 3){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public String valoracionMedia() {
+        int counter = 0;
+        DecimalFormat df = new DecimalFormat("#.#");
+        if(reviews.size() == 0){
+            return "0";
+        }else{
+            for (Review review: reviews) {
+                counter += review.getValuation();
+            }
+        }
+        return df.format((counter * 1.0) / reviews.size());
     }
 
     @Override

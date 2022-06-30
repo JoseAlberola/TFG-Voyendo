@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'es',
-        height: 1000,
         headerToolbar: {
             left: 'prev, next, today',
             center: 'title',
@@ -26,9 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
             frm.reset();
             document.getElementById("idappointment").value = 0;
             document.getElementById("btnEliminar").classList.add("d-none");
-            document.getElementById('start').value = info.dateStr;
+            document.getElementById('start').value = info.dateStr.substring(0, 10);
             document.getElementById("tituloModal").textContent = "Crear cita";
             document.getElementById("btnAceptar").textContent = "Aceptar";
+            document.getElementById("optionDefault").hidden = false;
+            document.getElementById("optionDefault").value = "";
+            document.getElementById("optionDefault").text = "Selecciona servicio";
             modalCrearCita.show();
         },
         eventClick: function (info){
@@ -39,7 +41,19 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById("username").value = info.event.extendedProps.username;
             document.getElementById("start").value = info.event.startStr.substring(0, 10);
             document.getElementById("starthour").value = info.event.extendedProps.starthour;
+            document.getElementById("optionDefault").text = info.event.title;
+            document.getElementById("optionDefault").value = info.event.extendedProps.idlabour;
             document.getElementById("idlabour").value = info.event.extendedProps.idlabour;
+
+            var opcionDefault = document.getElementById("optionDefault");
+            opcionDefault.hidden = false;
+            var optionsSelect = document.getElementsByClassName("opcionesDinamicas");
+            for(var i = 0; i < optionsSelect.length; i++){
+                if(optionsSelect[i].value == opcionDefault.value){
+                    opcionDefault.hidden = true;
+                }
+            }
+
             modalCrearCita.show();
         },
         eventDrop: function (info){

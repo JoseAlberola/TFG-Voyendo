@@ -158,6 +158,34 @@ public class CompanyService {
         return company;
     }
 
+    @Transactional
+    public Company actualizarImagen(Long idCompany, int numberImg, String fileName) {
+        logger.debug("Actualizando imagen " + numberImg + " de la empresa " + idCompany);
+        Company company = companyRepository.findById(idCompany).orElse(null);
+        if (company == null) {
+            throw new CompanyServiceException("No existe empresa con id " + idCompany);
+        }
+        switch (numberImg){
+            case 1:
+                company.setImg1(fileName.toString());
+                break;
+            case 2:
+                company.setImg2(fileName.toString());
+                break;
+            case 3:
+                company.setImg3(fileName.toString());
+                break;
+            case 4:
+                company.setImg4(fileName.toString());
+                break;
+            case 5:
+                company.setImg5(fileName.toString());
+                break;
+        }
+        companyRepository.save(company);
+        return company;
+    }
+
     public double calcularPorcentaje(double valorNuevo, double valorAnterior){
         if(valorNuevo == 0.0){
             return valorAnterior * -100.0;
@@ -249,16 +277,16 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public ArrayList<String> obtenerServicios(Company company){
         ArrayList<String> resultado = new ArrayList<>();
-        for(Labour servicio : company.getLabours()){
+        for(Labour servicio : company.getActivatedLabours()){
             resultado.add(servicio.getName());
         }
         return resultado;
     }
 
     @Transactional(readOnly = true)
-    public ArrayList<Integer> obtenerTotalReservasPorServicio(Company company){
+    public ArrayList<Integer> obtenerTotalReservasPorServicioActivo(Company company){
         ArrayList<Integer> resultado = new ArrayList<>();
-        for(Labour servicio : company.getLabours()){
+        for(Labour servicio : company.getActivatedLabours()){
             resultado.add(appointmentRepository.totalReservasPorServicio(company.getId(), servicio.getId()));
         }
         return resultado;
@@ -288,7 +316,7 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public HistoricoReservasGrafico obtenerHistoricoReservas(Company company){
         ArrayList<TraceHistoricoGrafico> traces = new ArrayList<>();
-        for(Labour servicio : company.getLabours()){
+        for(Labour servicio : company.getActivatedLabours()){
             ArrayList<Date> fechas = procesarFechas(appointmentRepository.fechasReservasPorServicio(company.getId(), servicio.getId()));
             ArrayList<Integer> valores = new ArrayList<>(appointmentRepository.reservasPorServicioMes(company.getId(), servicio.getId()));
             TraceHistoricoGrafico trace = new TraceHistoricoGrafico(servicio.getName(), fechas, valores);

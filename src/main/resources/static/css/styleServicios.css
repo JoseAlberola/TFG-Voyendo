@@ -1,0 +1,41 @@
+.container{
+    margin-top: 40px !important;
+}
+
+.card{
+    outline: none;
+    background-color: #fff;
+    border-radius: 20px;
+    transition: transform .3s;
+}
+
+.card:hover{
+    transform: translateY(-15px);
+    transition: transform .3s;
+}
+.text1{
+    font-size: 16px;
+}
+
+.info{
+    line-height: 17px;
+}
+
+.cost span{
+    font-weight: bold;
+    font-size: 18px;
+}
+.shoe{
+    background: #343a40;
+}
+.imgVacio{
+    opacity: 0.4;
+}
+.shoe:hover{
+    opacity: .8;
+}
+.cursor{
+    cursor: pointer;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}

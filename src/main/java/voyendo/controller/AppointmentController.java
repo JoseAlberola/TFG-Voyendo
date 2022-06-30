@@ -35,7 +35,7 @@ public class AppointmentController {
 
 
     @PostMapping("/companies/{idCompany}/appointments/nuevo")
-    public String nuevaCita(@PathVariable(value="idCompany") Long idCompany,
+    public String crearEditarCita(@PathVariable(value="idCompany") Long idCompany,
                             @ModelAttribute CrearAppointmentData crearAppointmentData, Model model,
                             RedirectAttributes redirectAttr, HttpSession session) {
 
@@ -60,7 +60,7 @@ public class AppointmentController {
             }
         }
         return "redirect:/companies/" + idCompany + "/home";
-     }
+    }
 
     @DeleteMapping("/companies/{idCompany}/appointments/{idAppointment}/eliminar")
     @ResponseBody

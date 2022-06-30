@@ -1,5 +1,7 @@
 package voyendo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +24,7 @@ public class Category implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @JsonManagedReference
     Set<Company> companies = new HashSet<>();
 
     public Category(){}
