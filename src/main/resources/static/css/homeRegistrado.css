@@ -1,3 +1,13 @@
+.contenedor-buscador{
+    /* background-color: #F4F7FC; */
+    background-color: #343a40;
+    margin: auto;
+    border-radius: 10px;
+}
+.btnBuscar{
+    background-color: #0062cc;
+    height: 38px;
+}
 .sinBordes{
     border-radius: 0px;
 }
@@ -10,4 +20,49 @@
 .sinBordesIzquierda{
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
+}
+.card-container-company{
+    width: 80%;
+    margin: auto;
+    border: none;
+}
+.contenido-card{
+    border: 1px solid #343a40;
+    border-radius: 15px;
+    background-color: #E6E6E711;
+}
+.col-imagen-company{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+.imagen-card-company{
+    width: 210px;
+    height: 150px;
+}
+.nombre-company{
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+.text-company{
+    font-size: 18px;
+}
+.select-servicios{
+    float: right;
+    width: 120px;
+    border: 2px solid #0062cc;
+    height: 35px;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #0062cc !important;
+    color: white !important;
+}
+.select-servicios option{
+    background-color: white !important;
+}
+.texto-resultados-obtenidos{
+    margin: auto !important;
+    width: 80% !important;
+}
+.letras-blancas{
+    color: white;
 }

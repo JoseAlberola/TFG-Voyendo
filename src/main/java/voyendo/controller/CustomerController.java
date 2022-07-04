@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.exception.UsuarioNotFoundException;
+import voyendo.controller.exception.CustomerNotFoundException;
 import voyendo.model.Company;
 import voyendo.service.CompanyService;
 
@@ -42,7 +42,7 @@ public class CustomerController {
 
         Company companyConsultada = companyService.findById(idEmpresaConsultada);
         if (companyConsultada == null) {
-            throw new UsuarioNotFoundException();
+            throw new CustomerNotFoundException();
         }
         model.addAttribute("usuarioConsultado", companyConsultada);
 

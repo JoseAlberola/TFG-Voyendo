@@ -3,7 +3,7 @@ package voyendo.controller;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.Data.CategoryData;
 import voyendo.controller.exception.EquipoNotFoundException;
-import voyendo.controller.exception.UsuarioNotFoundException;
+import voyendo.controller.exception.CustomerNotFoundException;
 import voyendo.model.Category;
 import voyendo.model.Company;
 import voyendo.service.CategoryService;
@@ -35,7 +35,7 @@ public class CategoryController {
 
         Company company = companyService.findById(idCompany);
         if(company == null){
-            throw new UsuarioNotFoundException();
+            throw new CustomerNotFoundException();
         }
         model.addAttribute("usuario", company);
 
@@ -50,7 +50,7 @@ public class CategoryController {
         managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
         Company company = companyService.findById(idUsuario);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CustomerNotFoundException();
         }
         model.addAttribute("usuario", company);
         return "formNuevoEquipo";
@@ -65,7 +65,7 @@ public class CategoryController {
 
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CustomerNotFoundException();
         }
 
         categoryService.crearCategoria(categoryData.getNombre());
@@ -85,7 +85,7 @@ public class CategoryController {
         Long idCompany = managerUserSession.usuarioLogeado(session);
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new UsuarioNotFoundException();
+            throw new CustomerNotFoundException();
         }
 
         model.addAttribute("usuario", company);

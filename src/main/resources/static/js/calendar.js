@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "starthour": horaInicio,
                 "endhour": horaFin
             };
-            var url = "/appointments/" + idappointment + "/mover";
+            var url = "/reservas/" + idappointment + "/mover";
             fetch(url, {
                 method: 'POST',
                 headers: {

@@ -45,7 +45,7 @@ public class FileUploadController {
     @Autowired
     ManagerUserSession managerUserSession;
 
-    @PostMapping("/companies/{id}/image/{idImg}/upload")
+    @PostMapping("/empresas/{id}/image/{idImg}/upload")
     public String uploadImagenEmpresa(@PathVariable(value="id") Long idCompany, @PathVariable(value="idImg") int numberImg,
                                       Model model, HttpSession session, RedirectAttributes flash,
                                       @RequestParam("file") MultipartFile imagen){
@@ -75,6 +75,6 @@ public class FileUploadController {
             }
         }
         flash.addFlashAttribute("exito", "Imagen actualizada.");
-        return "redirect:/companies/" + idCompany + "/cuenta";
+        return "redirect:/empresas/" + idCompany + "/cuenta";
     }
 }

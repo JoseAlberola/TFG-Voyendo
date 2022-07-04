@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-md-4">
             <form method="post" enctype="multipart/form-data" id="formImg1"
-                  th:action="@{/empresas/{idCompany}/image/1/upload(idCompany=${company.id})}">
+                  th:action="@{/companies/{idCompany}/image/1/upload(idCompany=${company.id})}">
                 <div class="profile-img">
                     <img th:src="@{'/recursos-usuarios/' + ${company.getImg1()}}" th:alt="${company.getImg1()}" />
                     <div class="file btn btn-lg btn-primary">
@@ -41,7 +41,7 @@
         <div class="col-md-4">
             <div class="profile-work">
                 <form method="post" enctype="multipart/form-data" id="formImg2"
-                      th:action="@{/empresas/{idCompany}/image/2/upload(idCompany=${company.id})}">
+                      th:action="@{/companies/{idCompany}/image/2/upload(idCompany=${company.id})}">
                     <img th:src="@{'/recursos-usuarios/' + ${company.getImg2()}}" th:alt="${company.getImg2()}" />
                     <div class="file btn btn-lg btn-primary">
                         Editar
@@ -51,7 +51,7 @@
                 </form>
                 <br><br/>
                 <form method="post" enctype="multipart/form-data" id="formImg3"
-                      th:action="@{/empresas/{idCompany}/image/3/upload(idCompany=${company.id})}">
+                      th:action="@{/companies/{idCompany}/image/3/upload(idCompany=${company.id})}">
                     <img th:src="@{'/recursos-usuarios/' + ${company.getImg3()}}" th:alt="${company.getImg3()}" />
                     <div class="file btn btn-lg btn-primary">
                         Editar
@@ -61,7 +61,7 @@
                 </form>
                 <br><br/>
                 <form method="post" enctype="multipart/form-data" id="formImg4"
-                      th:action="@{/empresas/{idCompany}/image/4/upload(idCompany=${company.id})}">
+                      th:action="@{/companies/{idCompany}/image/4/upload(idCompany=${company.id})}">
                     <img th:src="@{'/recursos-usuarios/' + ${company.getImg4()}}" th:alt="${company.getImg4()}" />
                     <div class="file btn btn-lg btn-primary">
                         Editar
@@ -71,7 +71,7 @@
                 </form>
                 <br><br/>
                 <form method="post" enctype="multipart/form-data" id="formImg5"
-                      th:action="@{/empresas/{idCompany}/image/5/upload(idCompany=${company.id})}">
+                      th:action="@{/companies/{idCompany}/image/5/upload(idCompany=${company.id})}">
                     <img th:src="@{'/recursos-usuarios/' + ${company.getImg5()}}" th:alt="${company.getImg5()}" />
                     <div class="file btn btn-lg btn-primary">
                         Editar
@@ -180,20 +180,20 @@
                             <ul class="pagination mt-2">
                                 <li class="page-item" th:classappend="${paginaActual <= 1} ? disabled : ''">
                                     <a class="page-link" aria-label="Previous"
-                                       th:href="@{/empresas/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${paginaActual}-1)}">
+                                       th:href="@{/companies/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${paginaActual}-1)}">
                                         <span aria-hidden="true">&laquo;</span>
                                         <span class="sr-only">Previous</span>
                                     </a>
                                 </li>
                                 <li class="page-item" th:each="pageNumber : ${pageNumbers}" th:classappend="${paginaActual == pageNumber} ? active : ''">
                                     <a class="page-link"
-                                       th:href="@{/empresas/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${pageNumber})}"
+                                       th:href="@{/companies/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${pageNumber})}"
                                        th:text="${pageNumber}"
                                        ></a>
                                 </li>
                                 <li class="page-item" th:classappend="${paginaActual >= pageNumbers.size()} ? disabled : ''">
                                     <a class="page-link" aria-label="Next"
-                                       th:href="@{/empresas/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${paginaActual}+1)}">
+                                       th:href="@{/companies/{id}/reviews(id=${company.id}, size=${reviewPage.size}, page=${paginaActual}+1)}">
                                         <span aria-hidden="true">&raquo;</span>
                                         <span class="sr-only">Next</span>
                                     </a>
@@ -215,7 +215,7 @@
                                 </div>
                                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body">
-                                        <form id="infoBasicaForm" method="post" th:action="@{/empresas/{id}/modificarInfo(id=${company.getId()})}" th:object="${modificarCompanyData}">
+                                        <form id="infoBasicaForm" method="post" th:action="@{/companies/{id}/modificarInfo(id=${company.getId()})}" th:object="${modificarCompanyData}">
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
                                                     <label for="username">Nombre de usuario</label>
@@ -261,7 +261,7 @@
                                 </div>
                                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                     <div class="card-body">
-                                        <form id="passwordForm" method="post" th:action="@{/empresas/{id}/modificarPassword(id=${company.getId()})}"
+                                        <form id="passwordForm" method="post" th:action="@{/companies/{id}/modificarPassword(id=${company.getId()})}"
                                               th:object="${modificarCompanyData}">
                                             <div class="form-row">
                                                 <div class="form-group col-md-4">
@@ -301,7 +301,7 @@
                                 </div>
                                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                                     <div class="card-body">
-                                        <form id="detallesEmpresaForm" method="post" th:action="@{/empresas/{id}/modificarDetallesEmpresa(id=${company.getId()})}"
+                                        <form id="detallesEmpresaForm" method="post" th:action="@{/companies/{id}/modificarDetallesEmpresa(id=${company.getId()})}"
                                               th:object="${modificarCompanyData}">
                                             <div class="form-row">
                                                 <div class="form-group col-md-4">
@@ -392,6 +392,7 @@
         // comprobar los posibles errores
         if (inputStart.value >= inputFinish.value && inputFinish.value != "") {
             mensaje = "La hora de apertura no puede ser posterior o igual a la hora de cierre.";
+            console.log("finish " + inputFinish.value + " justo detrás");
         }
         // mostrar/resetear mensaje (el mensaje se resetea poniendolo a "")
         inputStart.setCustomValidity(mensaje);

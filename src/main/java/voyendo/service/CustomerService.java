@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.Data.RegistroDataCustomer;
 import voyendo.model.*;
+import voyendo.service.exception.UsuarioServiceException;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class CustomerService {
         Optional<Customer> customer = customerRepository.findByUsername(username);
         if (!customer.isPresent()) {
             return LoginStatus.USER_NOT_FOUND;
-        } else if (!customer.get().getPassword().equals(password)) {
+        } else if (!managerUserSession.decryptPassword(password, customer.get().getPassword())) {
             return LoginStatus.ERROR_PASSWORD;
         } else {
             return LoginStatus.LOGIN_OK;

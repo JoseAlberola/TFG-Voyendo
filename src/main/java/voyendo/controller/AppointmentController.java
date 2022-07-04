@@ -1,13 +1,10 @@
 package voyendo.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.util.MultiValueMap;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.Data.AppointmentData;
 import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.exception.AppointmentNotFoundException;
 import voyendo.controller.exception.CompanyNotFoundException;
-import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Appointment;
 import voyendo.model.Company;
 import voyendo.service.AppointmentService;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 public class AppointmentController {
@@ -34,7 +30,7 @@ public class AppointmentController {
     ManagerUserSession managerUserSession;
 
 
-    @PostMapping("/companies/{idCompany}/appointments/nuevo")
+    @PostMapping("/empresas/{idCompany}/reservas/nueva")
     public String crearEditarCita(@PathVariable(value="idCompany") Long idCompany,
                             @ModelAttribute CrearAppointmentData crearAppointmentData, Model model,
                             RedirectAttributes redirectAttr, HttpSession session) {
@@ -59,10 +55,10 @@ public class AppointmentController {
                 redirectAttr.addFlashAttribute("exito", "Reserva modificada.");
             }
         }
-        return "redirect:/companies/" + idCompany + "/home";
+        return "redirect:/empresas/" + idCompany + "/home";
     }
 
-    @DeleteMapping("/companies/{idCompany}/appointments/{idAppointment}/eliminar")
+    @DeleteMapping("/empresas/{idCompany}/reservas/{idAppointment}/eliminar")
     @ResponseBody
     // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
     // de la petición HTTP, en lugar de una plantilla thymeleaf
@@ -81,7 +77,7 @@ public class AppointmentController {
         return "";
     }
 
-    @PostMapping("/appointments/{idAppointment}/mover")
+    @PostMapping("/reservas/{idAppointment}/mover")
     public String moverCita(@PathVariable(value="idAppointment") Long idAppointment,
                             Model model, @RequestBody JsonNode payload, RedirectAttributes redirectAttr, HttpSession session) {
 
@@ -107,7 +103,7 @@ public class AppointmentController {
             redirectAttr.addFlashAttribute("error", "No se ha podido mover la reserva.");
         }
 
-        return "redirect:/companies/" + idCompany + "/home";
+        return "redirect:/empresas/" + idCompany + "/home";
     }
 }
 

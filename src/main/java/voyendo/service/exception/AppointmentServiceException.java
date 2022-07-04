@@ -1,4 +1,4 @@
-package voyendo.service;
+package voyendo.service.exception;
 
 public class AppointmentServiceException extends RuntimeException {
 

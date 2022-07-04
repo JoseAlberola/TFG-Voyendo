@@ -220,7 +220,7 @@
                     </button>
                 </div>
                 <form id="formCrear" method="post"
-                      th:action="@{/companies/{idCompany}/labours/nuevo(idCompany=${company.id})}"
+                      th:action="@{/empresas/{idCompany}/servicios/nuevo(idCompany=${company.id})}"
                       th:object="${labourData}">
                     <div class="modal-body">
                         <div class="form-row">
@@ -249,7 +249,7 @@
                     </div>
                 </form>
                 <form id="formEliminar" method="post"
-                      th:action="@{/companies/{idCompany}/labours/eliminar(idCompany=${company.id})}"
+                      th:action="@{/empresas/{idCompany}/servicios/eliminar(idCompany=${company.id})}"
                       th:object="${labourEliminarData}">
                     <input id="labourid" type="hidden" class="form-control" name="labourid">
                 </form>
@@ -330,7 +330,6 @@
 
     function aceptar(){
         var formularioCrearEditar = document.getElementById("formCrear");
-        console.log(formularioCrearEditar.reportValidity());
         if(formularioCrearEditar.reportValidity()) {
             if (document.getElementById("btnAceptar").textContent == 'Editar') {
                 if (hayCambios(document.getElementById("idlabour").value)) {

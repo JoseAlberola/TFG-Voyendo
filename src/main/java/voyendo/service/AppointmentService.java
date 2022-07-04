@@ -1,6 +1,5 @@
 package voyendo.service;
 
-import org.apache.tomcat.jni.Local;
 import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.ReservaCalendario;
 import voyendo.model.*;
@@ -9,12 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import voyendo.service.exception.AppointmentServiceException;
+import voyendo.service.exception.DateFormatException;
+import voyendo.service.exception.LabourServiceException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 

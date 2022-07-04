@@ -1,8 +1,14 @@
 package voyendo.service;
 
+import org.apache.tomcat.jni.Local;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.graficos.HistoricoNuevosClientesGrafico;
 import voyendo.controller.graficos.HistoricoReservasGrafico;
 import voyendo.controller.Data.ModificarCompanyData;
@@ -14,12 +20,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import voyendo.service.exception.CategoryServiceException;
+import voyendo.service.exception.CompanyServiceException;
+import voyendo.service.exception.DateFormatException;
+import voyendo.service.exception.UsuarioServiceException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
+import static java.time.temporal.ChronoUnit.MINUTES;
 
 @Service
 public class CompanyService {
@@ -32,6 +52,8 @@ public class CompanyService {
 
     private AppointmentRepository appointmentRepository;
 
+    private LabourRepository labourRepository;
+
     @Autowired
     ManagerUserSession managerUserSession;
 
@@ -40,10 +62,11 @@ public class CompanyService {
 
     @Autowired
     public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository,
-                          AppointmentRepository appointmentRepository) {
+                          AppointmentRepository appointmentRepository, LabourRepository labourRepository) {
         this.companyRepository = companyRepository;
         this.categoryRepository = categoryRepository;
         this.appointmentRepository = appointmentRepository;
+        this.labourRepository = labourRepository;
     }
 
     @Transactional(readOnly = true)
@@ -380,6 +403,254 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public List<Appointment> obtenerReservas(Company company){
         return appointmentRepository.listarReservasEmpresa(company.getId());
+    }
+
+    public Page<Company> paginar(Pageable pageable, List<Company> listaEmpresas) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<Company> list;
+
+        if (listaEmpresas.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, listaEmpresas.size());
+            list = listaEmpresas.subList(startItem, toIndex);
+        }
+
+        Page<Company> listPage
+                = new PageImpl<Company>(list, PageRequest.of(currentPage, pageSize), listaEmpresas.size());
+
+        return listPage;
+    }
+
+    @Transactional(readOnly = true)
+    public HashSet<Company> criterioCategoria(String categoria){
+        List<Company> lista = new ArrayList<>();
+        if(!categoria.equals("Categoria")){
+            Category category = categoryRepository.findByName(categoria).orElse(null);
+            if(category != null){
+                lista = companyRepository.empresasPorCategoria(category.getId());
+            }
+        }else{
+            lista = companyRepository.todasLasEmpresas();
+        }
+        return new HashSet<Company>(lista);
+    }
+
+    /*@Transactional(readOnly = true)
+    public HashSet<Company> criterioServicio(String servicio){
+        HashSet<Company> hash = new HashSet<>();
+        if(!servicio.equals("")){
+            ArrayList<String> stopWords = new ArrayList<>(Arrays.asList("a", "de", "desde", "durante", "en", "hasta",
+                    "por", "sobre", "tras"));
+            String[] palabras = servicio.split(" ");
+            for(int i = 0; i < palabras.length; i++){
+                if(!palabras[i].isEmpty() && !stopWords.contains(palabras[i])){
+                    hash.addAll(companyRepository.empresasPorServicio("%" + palabras[i] + "%"));
+                }
+            }
+        }else{
+            hash = new HashSet<>(companyRepository.todasLasEmpresas());
+        }
+        return hash;
+    }
+     */
+
+    @Transactional(readOnly = true)
+    public HashSet<Company> criterioServicio(String servicio, HashSet<Labour> hashServicios){
+        HashSet<Company> hash = new HashSet<>();
+        if(!servicio.equals("")){
+            ArrayList<String> stopWords = new ArrayList<>(Arrays.asList("a", "de", "desde", "durante", "en", "hasta",
+                    "por", "sobre", "tras"));
+            String[] palabras = servicio.split(" ");
+            for(int i = 0; i < palabras.length; i++){
+                if(!palabras[i].isEmpty() && !stopWords.contains(palabras[i])){
+                    hash.addAll(companyRepository.empresasPorServicio("%" + palabras[i] + "%"));
+                    hashServicios.addAll(labourRepository.serviciosPorNombreLike("%" + palabras[i] + "%"));
+                }
+            }
+        }else{
+            hash = new HashSet<>(companyRepository.todasLasEmpresas());
+            hashServicios.addAll(labourRepository.serviciosDuracionMinimaPorEmpresa());
+        }
+        return hash;
+    }
+
+    private String peticionGetDistancia(URL url) throws IOException {
+        StringBuilder resultado = new StringBuilder();
+        // Abrir la conexión e indicar que será de tipo GET
+        HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
+        conexion.setRequestMethod("GET");
+        // Búferes para leer
+        BufferedReader rd = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+        String linea;
+        // Mientras el BufferedReader se pueda leer, agregar contenido a resultado
+        while ((linea = rd.readLine()) != null) {
+            resultado.append(linea);
+        }
+        // Cerrar el BufferedReader
+        rd.close();
+        return resultado.toString();
+    }
+
+    private HashMap<Company, Integer> crearMapaEmpresasDistancias(HashSet<Company> empresas){
+        HashMap<Company, Integer> resultado = new HashMap<>();
+        for (Company empresa : empresas) {
+            resultado.put(empresa, null);
+        }
+        return resultado;
+    }
+
+    private void mapaIntroducirDistancias(HashMap<Company, Integer> mapa, ArrayList<Integer> distancias){
+        int i = 0;
+        for (Company empresa : mapa.keySet()) {
+            mapa.put(empresa, distancias.get(i));
+            i++;
+        }
+    }
+
+    private void mapaEliminarEmpresasSegunDistancia(HashMap<Company, Integer> mapa, int limiteDistancia){
+        if(limiteDistancia != -1){
+            HashMap<Company, Integer> mapaCopia = new HashMap<>(mapa);
+            for (Company empresa : mapaCopia.keySet()) {
+                if(mapaCopia.get(empresa) == -1 || mapaCopia.get(empresa) > limiteDistancia){
+                    mapa.remove(empresa);
+                }
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public HashSet<Company> criterioUbicacion(HashSet<Company> lista, String ubicacion, int distanciaLimite){
+        HashMap<Company, Integer> mapaEmpresasDistancias = new HashMap<>();
+        if(!ubicacion.equals("")){
+            URL url = null;
+            try {
+                StringBuilder cadena = new StringBuilder();
+                mapaEmpresasDistancias = crearMapaEmpresasDistancias(lista);
+
+                // Si lista es vacío el stringbuilder puede traer problemas ya que no cargaria valor y se haría la pet GET
+
+                for (Company empresa: mapaEmpresasDistancias.keySet()) {
+                    cadena.append(empresa.getAddress());
+                    cadena.append("|");
+                }
+
+                ubicacion = ubicacion.replace(" ", "");
+                String ubicacionesEmpresas = cadena.toString().replace(" ", "");
+
+                url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + ubicacion +
+                        "&destinations=" + ubicacionesEmpresas + "&key=AIzaSyC1AhLxDCewFLcDy6Olu2Cy4DmR7TWGKYg");
+
+                String resultadoPeticion = peticionGetDistancia(url);
+
+                JSONObject objetoJson = new JSONObject(resultadoPeticion);
+                if(objetoJson.getString("status").equals("OK")){
+
+                    JSONArray elementos = objetoJson.getJSONArray("rows").getJSONObject(0).getJSONArray("elements");
+
+                    ArrayList<Integer> distancias = new ArrayList<>();
+                    for (int indice = 0; indice < elementos.length(); indice++) {
+                        if(elementos.getJSONObject(indice).getString("status").equals("OK")){
+                            int distancia = elementos.getJSONObject(indice).getJSONObject("distance").getInt("value");
+                            distancias.add(distancia);
+                        }else{
+                            distancias.add(-1);
+                        }
+                    }
+
+                    mapaIntroducirDistancias(mapaEmpresasDistancias, distancias);
+                    mapaEliminarEmpresasSegunDistancia(mapaEmpresasDistancias, distanciaLimite);
+                    return new HashSet<>(mapaEmpresasDistancias.keySet());
+                }else {
+                    return new HashSet<>();
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    @Transactional(readOnly = true)
+    public Date convertToDate(String fecha){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return sdf.parse(fecha);
+        } catch (ParseException e) {
+            throw new DateFormatException("Excepción al convertir el string: " + fecha + " a Date.");
+        }
+    }
+
+    public boolean tieneHuecoParaServicio(Company empresa, Labour servicio, String fecha){
+        Date dateFecha = convertToDate(fecha);
+        List<Appointment> reservasEseDia = appointmentRepository.todasLasReservasDelDia(empresa.getId(), dateFecha);
+        LocalTime horaInicio = LocalTime.parse(empresa.getStartday());
+        // LocalTime horaFin = horaInicio.plusMinutes(labour.getDuration());
+        for(Appointment reserva : reservasEseDia){
+            LocalTime siguienteHora = LocalTime.parse(reserva.getStarthour());
+            Long diferencia = Math.abs(MINUTES.between(horaInicio, siguienteHora));
+            if(diferencia >= servicio.getDuration()){
+                return true;
+            }
+            horaInicio = LocalTime.parse(reserva.getEndhour());
+        }
+
+        LocalTime horaFin = LocalTime.parse(empresa.getFinishday());
+        Long diferencia = Math.abs(MINUTES.between(horaInicio, horaFin));
+        if(diferencia >= servicio.getDuration()){
+            return true;
+        }
+
+        return false;
+    }
+
+    @Transactional(readOnly = true)
+    public HashSet<Company> criterioFecha(HashSet<Company> empresas, HashSet<Labour> servicios, String fecha){
+        HashSet<Company> empresasSetServicios = new HashSet<>();
+        if(!fecha.equals("")){
+            for(Labour servicio : servicios){
+                if(tieneHuecoParaServicio(servicio.getCompany(), servicio, fecha)){
+                    empresasSetServicios.add(servicio.getCompany());
+                }
+            }
+            return empresasSetServicios;
+        }
+        return empresas;
+    }
+
+    private void innerJoinHashSet(HashSet<Company> hash1, HashSet<Company> hash2){
+        HashSet<Company> copiaHash1 = new HashSet<>(hash1);
+        for(Company company : copiaHash1){
+            if(!hash2.contains(company)){
+                hash1.remove(company);
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Company> criteriosBuscador(String categoria, String servicio, String ubicacion, String fecha, int distanciaLimite){
+
+        HashSet<Company> hashSet = new HashSet<>();
+        HashSet<Labour> hashSetServicios = new HashSet<>();
+
+        // hashSet.addAll(criterioCategoria(categoria));
+        hashSet = criterioCategoria(categoria);
+
+        innerJoinHashSet(hashSet, criterioServicio(servicio, hashSetServicios));
+
+        // hashSet = criterioUbicacion(hashSet, ubicacion, distanciaLimite);
+        innerJoinHashSet(hashSet, criterioUbicacion(hashSet, ubicacion, distanciaLimite));
+
+        innerJoinHashSet(hashSet, criterioFecha(hashSet, hashSetServicios, fecha));
+
+        return  new ArrayList<>(hashSet);
     }
 
 }

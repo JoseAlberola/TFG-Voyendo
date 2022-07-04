@@ -53,11 +53,11 @@ public class LoginController {
         if (loginCompanyStatus == LoginStatus.LOGIN_OK) {
             Company company = companyService.findByUsername(loginData.getUsername());
             managerUserSession.logearUsuario(session, company.getId());
-            return "redirect:/companies/" + company.getId() + "/home";
+            return "redirect:/empresas/" + company.getId() + "/home";
         }else if(loginCustomerStatus == LoginStatus.LOGIN_OK){
             Customer customer = customerService.findByUsername(loginData.getUsername());
             managerUserSession.logearUsuario(session, customer.getId());
-            return "redirect:/home";
+            return "redirect:/clientes/" + customer.getId() + "/home";
         }else if(loginCompanyStatus == LoginStatus.ERROR_PASSWORD || loginCustomerStatus == LoginStatus.ERROR_PASSWORD){
             model.addAttribute("error", "Contraseña incorrecta");
             return "formLogin";

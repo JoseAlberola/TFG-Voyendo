@@ -59,7 +59,7 @@ public class CompanyController {
         modificarCompanyData.setCategory(company.getCategory());
     }
 
-    @GetMapping("/companies/{id}/cuenta")
+    @GetMapping("/empresas/{id}/cuenta")
     public String infoCuenta(@PathVariable(value="id") Long idCompany, @ModelAttribute ModificarCompanyData modificarCompanyData,
                              Model model, HttpSession session, @ModelAttribute("exito") String exito,
                              @ModelAttribute("error") String error) {
@@ -83,6 +83,7 @@ public class CompanyController {
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("paginaActual", currentPage);
         }
 
         Iterable<Category> categorias = categoryService.findAll();
@@ -97,7 +98,7 @@ public class CompanyController {
         return "cuentaEmpresa";
     }
 
-    @PostMapping("/companies/{id}/modificarInfo")
+    @PostMapping("/empresas/{id}/modificarInfo")
     public String modificarInfoBasicaSubmit(@PathVariable(value="id") Long idCompany, @Valid @ModelAttribute ModificarCompanyData modificarCompanyData,
                                             BindingResult result, Model model, RedirectAttributes flash, HttpSession session) {
 
@@ -108,22 +109,16 @@ public class CompanyController {
         }
 
         if (result.hasFieldErrors("name") || result.hasFieldErrors("mail")) {
-            /*
-            Iterable<Category> categorias = categoryService.findAll();
-            model.addAttribute("categorias", categorias);
-            model.addAttribute("company", company);
-            cargarModificarCompanyData(idCompany, modificarCompanyData);
-             */
             flash.addFlashAttribute("error", "No se ha podido actualizar su información.");
-            return "redirect:/companies/" + idCompany + "/cuenta";
+            return "redirect:/empresas/" + idCompany + "/cuenta";
         }
 
         companyService.modificarInfoBasica(idCompany, modificarCompanyData);
         flash.addFlashAttribute("exito", "Información actualizada correctamente.");
-        return "redirect:/companies/" + idCompany + "/cuenta";
+        return "redirect:/empresas/" + idCompany + "/cuenta";
     }
 
-    @PostMapping("/companies/{id}/modificarPassword")
+    @PostMapping("/empresas/{id}/modificarPassword")
     public String modificarPasswordSubmit(@PathVariable(value="id") Long idCompany, @Valid @ModelAttribute ModificarCompanyData modificarCompanyData,
                                           BindingResult result, Model model, RedirectAttributes flash, HttpSession session) {
 
@@ -134,14 +129,8 @@ public class CompanyController {
         }
 
         if (result.hasFieldErrors("password") || result.hasFieldErrors("newPassword") || result.hasFieldErrors("confirmNewPassword")) {
-            /*
-            Iterable<Category> categorias = categoryService.findAll();
-            model.addAttribute("categorias", categorias);
-            model.addAttribute("company", company);
-            cargarModificarCompanyData(idCompany, modificarCompanyData);
-             */
             flash.addFlashAttribute("error", "No se ha podido actualizar su contraseña.");
-            return "redirect:/companies/" + idCompany + "/cuenta";
+            return "redirect:/empresas/" + idCompany + "/cuenta";
         }
 
         if(!modificarCompanyData.getPassword().equals(company.getPassword())){
@@ -152,10 +141,10 @@ public class CompanyController {
             companyService.modificarPassword(idCompany, modificarCompanyData);
             flash.addFlashAttribute("exito", "Contraseña actualizada correctamente.");
         }
-        return "redirect:/companies/" + idCompany + "/cuenta";
+        return "redirect:/empresas/" + idCompany + "/cuenta";
     }
 
-    @PostMapping("/companies/{id}/modificarDetallesEmpresa")
+    @PostMapping("/empresas/{id}/modificarDetallesEmpresa")
     public String modificarDetallesEmpresaSubmit(@PathVariable(value="id") Long idCompany, @Valid @ModelAttribute ModificarCompanyData modificarCompanyData,
                                                  BindingResult result, Model model, RedirectAttributes flash, HttpSession session) {
 
@@ -166,24 +155,18 @@ public class CompanyController {
         }
 
         if (result.hasFieldErrors("startday") || result.hasFieldErrors("finishday") || result.hasFieldErrors("category") || result.hasFieldErrors("category.name")) {
-            /*
-            Iterable<Category> categorias = categoryService.findAll();
-            model.addAttribute("categorias", categorias);
-            model.addAttribute("company", company);
-            cargarModificarCompanyData(idCompany, modificarCompanyData);
-             */
             flash.addFlashAttribute("error", "No se han podido actualizar los detalles de su empresa.");
-            return "redirect:/companies/" + idCompany + "/cuenta";
+            return "redirect:/empresas/" + idCompany + "/cuenta";
         }
 
         Category category = categoryService.findByName(modificarCompanyData.getCategory().getName());
         modificarCompanyData.setCategory(category);
         companyService.modificarDetallesEmpresa(idCompany, modificarCompanyData);
         flash.addFlashAttribute("exito", "Detalles de la empresa actualizados correctamente.");
-        return "redirect:/companies/" + idCompany + "/cuenta";
+        return "redirect:/empresas/" + idCompany + "/cuenta";
     }
 
-    @PostMapping("/companies/{id}/premium")
+    @PostMapping("/empresas/{id}/premium")
     public String premium(@PathVariable(value="id") Long idCompany, @ModelAttribute PremiumData premiumData,
                                   Model model, HttpSession session) {
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);
@@ -192,10 +175,10 @@ public class CompanyController {
             throw new CompanyNotFoundException();
         }
         companyService.premium(idCompany, premiumData.isPremium());
-        return "redirect:/companies/" + idCompany + "/estadisticas";
+        return "redirect:/empresas/" + idCompany + "/estadisticas";
     }
 
-    @GetMapping("/companies/{id}/estadisticas")
+    @GetMapping("/empresas/{id}/estadisticas")
     public String estadisticas(@PathVariable(value="id") Long idCompany, Model model, HttpSession session) {
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);
 
@@ -215,7 +198,7 @@ public class CompanyController {
         return "estadisticas";
     }
 
-    @GetMapping("/companies/{id}/servicios")
+    @GetMapping("/empresas/{id}/servicios")
     public String servicios(@PathVariable(value="id") Long idCompany, Model model, HttpSession session,
                             @ModelAttribute("exito") String exito, @ModelAttribute("error") String error) {
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);

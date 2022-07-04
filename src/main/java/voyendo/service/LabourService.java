@@ -5,12 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.Data.LabourData;
 import voyendo.model.*;
-
-import java.time.LocalTime;
-import java.util.Date;
+import voyendo.service.exception.LabourServiceException;
 
 @Service
 public class LabourService {

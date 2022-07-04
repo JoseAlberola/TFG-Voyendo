@@ -6,13 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.Data.CategoryData;
 import voyendo.controller.Data.ModificarCompanyData;
 import voyendo.controller.exception.CompanyNotFoundException;
-import voyendo.controller.exception.EquipoNotFoundException;
-import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Category;
 import voyendo.model.Company;
 import voyendo.model.Review;
@@ -56,7 +52,7 @@ public class ReviewController {
         modificarCompanyData.setCategory(company.getCategory());
     }
 
-    @RequestMapping(value = "/companies/{id}/reviews", method = RequestMethod.GET)
+    @RequestMapping(value = "/empresas/{id}/reviews", method = RequestMethod.GET)
     public String listadoReviews(@PathVariable(value="id") Long idCompany, @ModelAttribute ModificarCompanyData modificarCompanyData,
                                  Model model, HttpSession session,
                                  @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
@@ -73,6 +69,7 @@ public class ReviewController {
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("paginaActual", currentPage);
         }
 
         managerUserSession.comprobarUsuarioLogeado(session, idCompany);

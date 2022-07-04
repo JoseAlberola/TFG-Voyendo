@@ -1,7 +1,5 @@
 package voyendo.authentication;
 
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import voyendo.controller.exception.UsuarioNotFoundException;
 import voyendo.model.Company;
 import voyendo.model.Customer;
 import voyendo.service.CompanyService;

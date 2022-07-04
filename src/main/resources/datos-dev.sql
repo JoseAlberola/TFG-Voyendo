@@ -2,9 +2,30 @@
 INSERT INTO categories (name) VALUES('Categoria');
 INSERT INTO categories (name) VALUES('Peluquería');
 INSERT INTO categories (name) VALUES('Clínica');
+INSERT INTO categories (name) VALUES('Salón de estética');
 
 INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
-VALUES('company', 'Empresa', 'company@ua', '123', '123456789', 'Aspe', '09:00', '20:00', 'false', '2');
+VALUES('company', 'Barberia Rapiño', 'company@ua', '123', '123456789', 'Aspe, España', '09:00', '20:00', 'false', '2');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company1', 'Clinica Rosario', 'company1@ua', '123', '123456789', 'Elche', '09:00', '19:00', 'false', '3');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company2', 'Peluqueria Cristian', 'company2@ua', '123', '123456789', 'Alicante', '09:00', '20:00', 'false', '2');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company3', 'Clinica Dental El Puente', 'company3@ua', '123', '123456789', 'Aspe, Alicante, España', '10:00', '20:00', 'false', '3');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company4', 'La pilarica', 'company4@ua', '123', '123456789', 'Aspe, Alicante, España', '08:00', '21:00', 'false', '4');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company5', 'Virgen de las Nieves', 'company5@ua', '123', '123456789', 'San Juan de Alicante, España', '08:00', '21:00', 'false', '3');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company6', 'Peluqueria Pedro y Ana', 'company6@ua', '123', '123456789', 'San Juan de Alicante, España', '08:00', '21:00', 'false', '2');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company7', 'El salvador', 'company7@ua', '123', '123456789', 'San Juan de Alicante, España', '08:00', '21:00', 'false', '3');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company8', 'Cristina dental', 'company8@ua', '123', '123456789', 'Avenida Constitución, 10, Aspe, España', '08:00', '21:00', 'false', '3');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company9', 'Centro únicos', 'company9@ua', '123', '123456789', 'San Juan de Alicante, España', '08:00', '21:00', 'false', '4');
+INSERT INTO companies (username, name, mail, password, phone, address, startday, finishday, premium, category_id)
+VALUES('company10', 'Centro como tú', 'company10@ua', '123', '123456789', 'Monforte del Cid, España', '08:00', '21:00', 'false', '4');
 
 INSERT INTO labours (name, duration, price, activated, company_id)
 VALUES('Corte de pelo', '30', '12', 'true', '1');

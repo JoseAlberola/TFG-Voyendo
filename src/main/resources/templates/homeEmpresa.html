@@ -39,7 +39,7 @@
                     </button>
                 </div>
                 <form id="formCrear" method="post"
-                      th:action="@{/companies/{idCompany}/appointments/nuevo(idCompany=${company.id})}"
+                      th:action="@{/empresas/{idCompany}/reservas/nueva(idCompany=${company.id})}"
                       th:object="${crearAppointmentData}">
                     <div class="modal-body">
                         <div class="form-row">
@@ -104,7 +104,7 @@
                     Para poder comenzar necesitamos saber una serie de detalles de la empresa. Tan sólo será un par de minutos.
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-warning" th:href="@{'/companies/' + ${company.getId()} + '/cuenta'}" role="button">Entendido</a>
+                    <a class="btn btn-warning" th:href="@{'/empresas/' + ${company.getId()} + '/cuenta'}" role="button">Entendido</a>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@
 
     function del() {
         var idCita = document.getElementById("idappointment").value;
-        var url = "/companies/" + [[${company.getId()}]] + "/appointments/" + idCita + "/eliminar";
+        var url = "/empresas/" + [[${company.getId()}]] + "/reservas/" + idCita + "/eliminar";
 
         Swal.fire({
             title: 'Advertencia',

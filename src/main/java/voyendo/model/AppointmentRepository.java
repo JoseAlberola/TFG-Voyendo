@@ -11,7 +11,7 @@ import java.util.List;
 public interface AppointmentRepository extends CrudRepository<Appointment, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM APPOINTMENTS WHERE company_id = ?1 AND " +
-            "date = ?2")
+            "date = ?2 ORDER BY date, starthour")
     List<Appointment> todasLasReservasDelDia(Long idCompany, Date fecha);
 
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM APPOINTMENTS a INNER JOIN CUSTOMERS c ON " +

@@ -38,7 +38,7 @@ public class LabourController {
     ManagerUserSession managerUserSession;
 
 
-    @PostMapping("/companies/{idCompany}/labours/nuevo")
+    @PostMapping("/empresas/{idCompany}/servicios/nuevo")
     public String crearEditarLabour(@PathVariable(value="idCompany") Long idCompany,
                                     @ModelAttribute LabourData labourData, Model model,
                                     RedirectAttributes redirectAttr, HttpSession session) {
@@ -63,10 +63,10 @@ public class LabourController {
             }
         }
 
-        return "redirect:/companies/" + idCompany + "/servicios";
+        return "redirect:/empresas/" + idCompany + "/servicios";
     }
 
-    @PostMapping("/companies/{idCompany}/labours/eliminar")
+    @PostMapping("/empresas/{idCompany}/servicios/eliminar")
     // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
     // de la petición HTTP, en lugar de una plantilla thymeleaf
     public String eliminarServicio(@PathVariable(value="idCompany") Long idCompany,
@@ -87,7 +87,7 @@ public class LabourController {
             redirectAttr.addFlashAttribute("exito", "Servicio eliminado.");
         }
 
-        return "redirect:/companies/" + idCompany + "/servicios";
+        return "redirect:/empresas/" + idCompany + "/servicios";
     }
 
 }
