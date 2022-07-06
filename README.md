@@ -35,7 +35,7 @@ IntelliJ IDEA detectará las 2 configuraciones de la aplicación. Una para ejecu
 Con la configuración por defecto `Application` ejecutaremos H2.
 ```
 ```
-Con la configuración sql `Application sql` ejecutaremos MySQL.
+Con la configuración sql `Application sql` ejecutaremos MySQL. No olvidar crear antes el esquema `voyendo`
 ```
 
 ## Abrir la aplicación
