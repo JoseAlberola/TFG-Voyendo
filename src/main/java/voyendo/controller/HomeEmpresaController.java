@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.Data.CrearAppointmentData;
+import voyendo.controller.exception.CompanyNotFoundException;
 import voyendo.controller.exception.CustomerNotFoundException;
 import voyendo.model.Company;
 import voyendo.service.*;
@@ -41,7 +42,7 @@ public class HomeEmpresaController {
 
         Company company = companyService.findById(idCompany);
         if (company == null) {
-            throw new CustomerNotFoundException();
+            throw new CompanyNotFoundException();
         }
         model.addAttribute("company", company);
         model.addAttribute("crearAppointmentData", new CrearAppointmentData());

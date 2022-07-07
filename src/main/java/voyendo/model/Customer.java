@@ -141,6 +141,15 @@ public class Customer implements Serializable {
         this.reviews = reviews;
     }
 
+    public Review getReviewEmpresa(Long idCompany){
+        for(Review review : reviews){
+            if(review.getCompany().getId() == idCompany){
+                return review;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

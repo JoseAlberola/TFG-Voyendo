@@ -54,6 +54,8 @@ public class CompanyService {
 
     private LabourRepository labourRepository;
 
+    private ReviewRepository reviewRepository;
+
     @Autowired
     ManagerUserSession managerUserSession;
 
@@ -62,11 +64,13 @@ public class CompanyService {
 
     @Autowired
     public CompanyService(CompanyRepository companyRepository, CategoryRepository categoryRepository,
-                          AppointmentRepository appointmentRepository, LabourRepository labourRepository) {
+                          AppointmentRepository appointmentRepository, LabourRepository labourRepository,
+                          ReviewRepository reviewRepository) {
         this.companyRepository = companyRepository;
         this.categoryRepository = categoryRepository;
         this.appointmentRepository = appointmentRepository;
         this.labourRepository = labourRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Transactional(readOnly = true)
@@ -379,14 +383,52 @@ public class CompanyService {
         Date fechaFinRango = appointmentRepository.fechaUltimaReserva(company.getId());
         ArrayList<Date> fechas = procesarFechas(appointmentRepository.fechasTodasLasReservas(company.getId()));
         ArrayList<Integer> valores;
-        if(env.getActiveProfiles().length == 0){  // No hay perfil activado. Estamos ejecutando H2-CONSOLE
-            valores = numeroNuevosClientesIncrementalH2(company.getId(), fechas);
-        }else{  // Ejecutamos MySQL
+        // Hay perfil y es sql. Ejecutamos MySQL
+        if(env.getActiveProfiles().length != 0 &&
+                Arrays.stream(env.getActiveProfiles()).anyMatch(env -> (env.equalsIgnoreCase("sql")))){
             valores = numeroNuevosClientesIncrementalMySQL(company.getId(), fechas);
+        }else{  // No hay perfil activado. Estamos ejecutando H2-CONSOLE
+            valores = numeroNuevosClientesIncrementalH2(company.getId(), fechas);
         }
         TraceHistoricoGrafico trace = new TraceHistoricoGrafico("Nuevos clientes", fechas, valores);
         HistoricoNuevosClientesGrafico grafico = new HistoricoNuevosClientesGrafico(trace, fechaInicioRango, fechaFinRango);
         return grafico;
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsRankingCard obtenerRankingServiciosMasReservados(Company company){
+        List<String> nombresServicios;
+        List<Double> cantidadReservas;
+        nombresServicios = labourRepository.nombresTresServiciosMasReservados(company.getCategory().getId());
+        cantidadReservas = labourRepository.cantidadTresServiciosMasReservados(company.getCategory().getId());
+        return new StatisticsRankingCard(new ArrayList<>(nombresServicios), new ArrayList<>(cantidadReservas));
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsRankingCard obtenerRankingEmpresasMasIngresos(Company company){
+        List<String> nombresEmpresas;
+        List<Double> cantidadIngresos;
+        nombresEmpresas = appointmentRepository.nombresTopTresEmpresasIngresosTotalesEsteMes(company.getCategory().getId());
+        cantidadIngresos = appointmentRepository.ingresosTotalesTopTresEmpresasEsteMes(company.getCategory().getId());
+        return new StatisticsRankingCard(new ArrayList<>(nombresEmpresas), new ArrayList<>(cantidadIngresos));
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsRankingCard obtenerRankingEmpresasMejoresReviews(Company company){
+        List<String> nombresEmpresas;
+        List<Double> mediasReviews;
+        nombresEmpresas = reviewRepository.nombresTopTresEmpresasMejoresReviews(company.getCategory().getId());
+        mediasReviews = reviewRepository.mediasReviewsTopTresEmpresas(company.getCategory().getId());
+        return new StatisticsRankingCard(new ArrayList<>(nombresEmpresas), new ArrayList<>(mediasReviews));
+    }
+
+    @Transactional(readOnly = true)
+    public ArrayList<StatisticsRankingCard> obtenerCartasRankingEstadisticas(Company company){
+        ArrayList<StatisticsRankingCard> cartas = new ArrayList<>();
+        cartas.add(obtenerRankingServiciosMasReservados(company));
+        cartas.add(obtenerRankingEmpresasMasIngresos(company));
+        cartas.add(obtenerRankingEmpresasMejoresReviews(company));
+        return cartas;
     }
 
     @Transactional
@@ -437,25 +479,6 @@ public class CompanyService {
         }
         return new HashSet<Company>(lista);
     }
-
-    /*@Transactional(readOnly = true)
-    public HashSet<Company> criterioServicio(String servicio){
-        HashSet<Company> hash = new HashSet<>();
-        if(!servicio.equals("")){
-            ArrayList<String> stopWords = new ArrayList<>(Arrays.asList("a", "de", "desde", "durante", "en", "hasta",
-                    "por", "sobre", "tras"));
-            String[] palabras = servicio.split(" ");
-            for(int i = 0; i < palabras.length; i++){
-                if(!palabras[i].isEmpty() && !stopWords.contains(palabras[i])){
-                    hash.addAll(companyRepository.empresasPorServicio("%" + palabras[i] + "%"));
-                }
-            }
-        }else{
-            hash = new HashSet<>(companyRepository.todasLasEmpresas());
-        }
-        return hash;
-    }
-     */
 
     @Transactional(readOnly = true)
     public HashSet<Company> criterioServicio(String servicio, HashSet<Labour> hashServicios){
@@ -539,9 +562,11 @@ public class CompanyService {
 
                 ubicacion = ubicacion.replace(" ", "");
                 String ubicacionesEmpresas = cadena.toString().replace(" ", "");
+                String key = ApiKeyMatrix.getKey();
 
                 url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + ubicacion +
-                        "&destinations=" + ubicacionesEmpresas + "&key=AIzaSyC1AhLxDCewFLcDy6Olu2Cy4DmR7TWGKYg");
+                        "&destinations=" + ubicacionesEmpresas + "&key=" +
+                        ApiKeyMatrix.getKey());
 
                 String resultadoPeticion = peticionGetDistancia(url);
 
@@ -640,12 +665,10 @@ public class CompanyService {
         HashSet<Company> hashSet = new HashSet<>();
         HashSet<Labour> hashSetServicios = new HashSet<>();
 
-        // hashSet.addAll(criterioCategoria(categoria));
         hashSet = criterioCategoria(categoria);
 
         innerJoinHashSet(hashSet, criterioServicio(servicio, hashSetServicios));
 
-        // hashSet = criterioUbicacion(hashSet, ubicacion, distanciaLimite);
         innerJoinHashSet(hashSet, criterioUbicacion(hashSet, ubicacion, distanciaLimite));
 
         innerJoinHashSet(hashSet, criterioFecha(hashSet, hashSetServicios, fecha));

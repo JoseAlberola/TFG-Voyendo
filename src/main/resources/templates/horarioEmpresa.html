@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments::head(titulo='Horario empresa')"></div>
+</head>
+
+<style>
+    #tooltip1{
+        color: black;
+    }
+    #tooltip2{
+        color: black;
+    }
+</style>
+
+<body>
+
+<div th:replace="fragments::menuLogueadoEmpresa(company=${company})"/>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="calendar-container" style="margin-top: 40px; padding-right: 20px; padding-left: 20px; padding-bottom: 40px">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pulsar en fecha y para crear cita -->
+    <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModal"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formCrear" method="post"
+                      th:action="@{/empresas/{idCompany}/reservas/nueva(idCompany=${company.id})}"
+                      th:object="${crearAppointmentData}">
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col">
+                                <label for="username" class="form-label">
+                                    <a id="tooltip1" href="#" data-toggle="tooltip" title="Tiene cuenta">Nombre de usuario</a>
+                                    &nbsp;/&nbsp;
+                                    <a id="tooltip2" href="#" data-toggle="tooltip" title="NO tiene cuenta">Nombre invitado</a>
+                                </label>
+                                <input id="idappointment" type="hidden" class="form-control" name="idappointment">
+                                <input id="username" type="text" class="form-control" name="username" required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <div class="col">
+                                <label for="start" class="form-label">Fecha</label>
+                                <input id="start" type="date" class="form-control" name="start" placeholder="Fecha" required>
+                            </div>
+                            <div class="col">
+                                <label for="starthour" class="form-label">Hora</label>
+                                <input id="starthour" type="time" class="form-control" name="starthour" required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="idlabour" class="form-label">Servicio</label>
+                                    <select id="idlabour" class="form-control" name="idlabour" required>
+                                        <option id="optionDefault" value="" selected>Selecciona servicio</option>
+                                        <option th:each="servicio: ${company.getActivatedLabours()}" class="opcionesDinamicas"
+                                                th:value="${servicio.id}" th:text="${servicio.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button id="btnEliminar" type="button" th:onclick="'del()'" class="btn btn-danger">Eliminar</button>
+                        <button id="btnAceptar" type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal primer inicio sesión -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                        ¡Bienvenido!
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    Para poder comenzar necesitamos saber una serie de detalles de la empresa. Tan sólo será un par de minutos.
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-warning" th:href="@{'/empresas/' + ${company.getId()} + '/cuenta'}" role="button">Entendido</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+
+<script th:inline="javascript">
+    var horaApertura = [[${company.getStartday()}]];
+    var horaCierre = [[${company.getFinishday()}]];
+
+    function servicioActivo(servicio, idLabour){
+        return servicio.isActivated() && servicio.id == idLabour;
+    }
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    var error = [[${error}]];
+    if(error != null && error !== ''){
+        swalWithBootstrapButtons.fire(
+            'Error',
+            error,
+            'error'
+        )
+    }
+
+    var exito = [[${exito}]];
+    if(exito != null && exito !== ''){
+        swalWithBootstrapButtons.fire(
+            '¡Hecho!',
+            exito,
+            'success'
+        )
+    }
+
+    function del() {
+        var idCita = document.getElementById("idappointment").value;
+        var url = "/empresas/" + [[${company.getId()}]] + "/reservas/" + idCita + "/eliminar";
+
+        Swal.fire({
+            title: 'Advertencia',
+            text: "¿Estás seguro de eliminar la reserva?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(url, {
+                    method: 'DELETE',
+                }).then((res) => location.reload());
+            }
+        })
+    }
+
+    window.onload = function() {
+        if([[${company.category.name}]] === "Categoria" || [[${company.startday}]] == null || [[${company.finishday}]] == null){
+            $('#staticBackdrop').modal('show');
+        }
+        var tooltip1 = document.getElementById("tooltip1");
+        new bootstrap.Tooltip(tooltip1);
+        var tooltip2 = document.getElementById("tooltip2");
+        new bootstrap.Tooltip(tooltip2);
+    };
+    var reservas =[[${reservasCalendario}]];
+</script>
+<script th:src="@{/js/main.min.js}"></script>
+<script th:src="@{/js/es.js}"></script>
+<script th:src="@{/js/calendar.js}"></script>
+
+
+</body>
+</html>

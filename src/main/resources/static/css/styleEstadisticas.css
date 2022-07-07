@@ -36,6 +36,21 @@ body{
     font-size: 24px;
     font-weight: bold;
 }
+.card-top-number1{
+    font-size: 18px;
+    color: #003D80;
+    font-weight: 500;
+}
+.card-top-number2{
+    font-size: 18px;
+    color: #0062cc;
+    font-weight: 500;
+}
+.card-top-number3{
+    font-size: 18px;
+    color: #609ddf;
+    font-weight: 500;
+}
 .card-top-percentage{
     font-weight: 625;
     font-size: 14px;

@@ -70,8 +70,8 @@
         <div class="card-body contenido-card">
             <div class="row">
                 <div class="col-md-3 d-flex justify-content-center align-items-center col-imagen-company">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20%2810%29.webp"
-                         class="img-fluid shadow-1 imagen-card-company" alt="woman avatar"/>
+                    <img th:src="@{'/recursos-usuarios/' + ${company.getImg1()}}" th:alt="${company.getImg1()}"
+                         class="img-fluid shadow-1 imagen-card-company"/>
                 </div>
                 <div class="col-md-9">
                     <p class="fw-bold mt-4 mb-3 text-uppercase nombre-company">

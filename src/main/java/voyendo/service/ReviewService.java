@@ -10,8 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import voyendo.controller.Data.CrearAppointmentData;
+import voyendo.controller.Data.CrearReviewData;
+import voyendo.controller.Data.LabourData;
 import voyendo.controller.ReservaCalendario;
 import voyendo.model.*;
+import voyendo.service.exception.LabourServiceException;
+import voyendo.service.exception.ReviewServiceException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,6 +66,42 @@ public class ReviewService {
     public Review findById(Long reviewId) {
         logger.debug("Buscando review " + reviewId);
         return reviewRepository.findById(reviewId).orElse(null);
+    }
+
+    @Transactional
+    public boolean crearReview(Company company, Customer customer, CrearReviewData crearReviewData) {
+        logger.debug("Creando review para la empresa " + company.getId() + " el cliente " + customer.getId());
+
+        Review review = new Review(crearReviewData.getComentario(), crearReviewData.getValuation(),
+                company, customer);
+        reviewRepository.save(review);
+        return true;
+    }
+
+    @Transactional
+    public boolean modificarReview(CrearReviewData crearReviewData) {
+        Long idReview = crearReviewData.getIdreview();
+        logger.debug("Modificando review " + idReview);
+
+        Review review = reviewRepository.findById(idReview).orElse(null);
+        if (review == null) {
+            throw new ReviewServiceException("No existe review con id " + idReview);
+        }
+        review.setText(crearReviewData.getComentario());
+        review.setValuation(crearReviewData.getValuation());
+        reviewRepository.save(review);
+        return true;
+    }
+
+    @Transactional
+    public boolean eliminarReview(Long idReview) {
+        logger.debug("Eliminando review " + idReview);
+        Review review = reviewRepository.findById(idReview).orElse(null);
+        if (review == null) {
+            throw new ReviewServiceException("No existe review con id " + idReview);
+        }
+        reviewRepository.delete(review);
+        return true;
     }
 
 }

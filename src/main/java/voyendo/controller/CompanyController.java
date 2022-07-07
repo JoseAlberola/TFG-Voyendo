@@ -195,6 +195,7 @@ public class CompanyController {
         model.addAttribute("labelsPieChartAppointmentsLabour", companyService.obtenerServicios(company));
         model.addAttribute("historicalAppointments", companyService.obtenerHistoricoReservas(company));
         model.addAttribute("historicalNewCustomers", companyService.obtenerHistoricoNuevosClientes(company));
+        model.addAttribute("rankingCards", companyService.obtenerCartasRankingEstadisticas(company));
         return "estadisticas";
     }
 

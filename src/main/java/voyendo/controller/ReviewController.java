@@ -6,14 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.Data.ModificarCompanyData;
+import voyendo.controller.Data.*;
 import voyendo.controller.exception.CompanyNotFoundException;
-import voyendo.model.Category;
-import voyendo.model.Company;
-import voyendo.model.Review;
+import voyendo.controller.exception.CustomerNotFoundException;
+import voyendo.controller.exception.LabourNotFoundException;
+import voyendo.controller.exception.ReviewNotFoundException;
+import voyendo.model.*;
 import voyendo.service.CategoryService;
 import voyendo.service.CompanyService;
+import voyendo.service.CustomerService;
 import voyendo.service.ReviewService;
 
 import javax.servlet.http.HttpSession;
@@ -30,6 +33,9 @@ public class ReviewController {
 
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    CustomerService customerService;
 
     @Autowired
     CategoryService categoryService;
@@ -88,6 +94,69 @@ public class ReviewController {
         model.addAttribute("valoracionMedia", company.valoracionMedia());
         cargarModificarCompanyData(idCompany, modificarCompanyData);
         return "cuentaEmpresa";
+    }
+
+    @PostMapping("/empresas/{idCompany}/reviews/nueva")
+    public String crearEditarLabour(@PathVariable(value="idCompany") Long idCompany,
+                                    @ModelAttribute CrearReviewData crearReviewData, Model model,
+                                    RedirectAttributes redirectAttr, HttpSession session) {
+
+        Long idCustomer = managerUserSession.usuarioLogeado(session);
+        managerUserSession.comprobarUsuarioLogeado(session, idCustomer);
+        Customer customer = customerService.findById(idCustomer);
+        if (customer == null) {
+            throw new CustomerNotFoundException();
+        }
+
+        Company company = companyService.findById(idCompany);
+        if (company == null) {
+            throw new CompanyNotFoundException();
+        }
+
+        if(crearReviewData.getIdreview() == null){  // Crear review
+            if(!reviewService.crearReview(company, customer, crearReviewData)){
+                redirectAttr.addFlashAttribute("error", "No se ha podido crear la review.");
+            }else{
+                redirectAttr.addFlashAttribute("exito", "Review creada.");
+            }
+        }else{  // Modificar review
+            if(!reviewService.modificarReview(crearReviewData)){
+                redirectAttr.addFlashAttribute("error", "No se ha podido modificar la review.");
+            }else{
+                redirectAttr.addFlashAttribute("exito", "Review modificada.");
+            }
+        }
+
+        return "redirect:/empresas/" + idCompany + "/detalles";
+    }
+
+    @PostMapping("/empresas/{idCompany}/reviews/eliminar")
+    // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
+    // de la petición HTTP, en lugar de una plantilla thymeleaf
+    public String eliminarReview(@PathVariable(value="idCompany") Long idCompany,
+                                   @ModelAttribute ReviewEliminarData reviewEliminarData, Model model,
+                                   RedirectAttributes redirectAttr, HttpSession session) {
+
+        Long idReview = reviewEliminarData.getReviewid();
+        Review review = reviewService.findById(idReview);
+        if (review == null) {
+            throw new ReviewNotFoundException();
+        }
+
+        Long idCustomer = managerUserSession.usuarioLogeado(session);
+        managerUserSession.comprobarUsuarioLogeado(session, idCustomer);
+        Customer customer = customerService.findById(idCustomer);
+        if (customer == null) {
+            throw new CustomerNotFoundException();
+        }
+
+        if(!reviewService.eliminarReview(idReview)){
+            redirectAttr.addFlashAttribute("error", "No se ha podido eliminar la review.");
+        }else{
+            redirectAttr.addFlashAttribute("exito", "Review eliminada.");
+        }
+
+        return "redirect:/empresas/" + idCompany + "/detalles";
     }
 
 }

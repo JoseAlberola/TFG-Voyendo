@@ -142,15 +142,18 @@ public class AppointmentService {
     public boolean nuevaReserva(Company company, CrearAppointmentData crearAppointmentData) {
         logger.debug("Creando reserva para la empresa " + company.getId());
         Date fechaCita = convertToDate(crearAppointmentData.getStart());
+
         Labour labour = labourRepository.findById(crearAppointmentData.getIdlabour()).orElse(null);
         if(labour == null){
             throw new LabourServiceException("No existe labour con id: " + crearAppointmentData.getIdlabour());
         }
+
         Appointment appointment = crearReserva(fechaCita, company, labour, crearAppointmentData);
         appointment.setStarthour(crearAppointmentData.getStarthour());
         LocalTime horaInicio = LocalTime.parse(crearAppointmentData.getStarthour());
         LocalTime horaFin = horaInicio.plusMinutes(labour.getDuration());
         appointment.setEndhour(horaFin.toString());
+
         if(comprobarHorasCita(appointment)){
             appointmentRepository.save(appointment);
             return true;
