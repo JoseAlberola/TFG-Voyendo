@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import voyendo.service.exception.EquipoServiceException;
 
 import java.util.List;
 
@@ -44,26 +43,4 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public Category findByName(String name) { return categoryRepository.findByName(name).orElse(null); }
-
-    @Transactional
-    public Category modificaCategoria(Long idCategoria, String nuevoNombre){
-        logger.debug("Modificando equipo " + idCategoria + " - " + nuevoNombre);
-        Category category = categoryRepository.findById(idCategoria).orElse(null);
-        if(category == null){
-            throw new EquipoServiceException("No existe categoría con id " + idCategoria);
-        }
-        category.setName(nuevoNombre);
-        categoryRepository.save(category);
-        return category;
-    }
-
-    @Transactional
-    public void borraCategoria(Long idCategoria) {
-        logger.debug("Borrando categoria " + idCategoria);
-        Category category = categoryRepository.findById(idCategoria).orElse(null);
-        if (category == null) {
-            throw new EquipoServiceException("No existe equipo con id " + idCategoria);
-        }
-        categoryRepository.delete(category);
-    }
 }

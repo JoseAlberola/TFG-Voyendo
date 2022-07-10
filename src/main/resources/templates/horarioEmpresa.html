@@ -5,18 +5,9 @@
     <div th:replace="fragments::head(titulo='Horario empresa')"></div>
 </head>
 
-<style>
-    #tooltip1{
-        color: black;
-    }
-    #tooltip2{
-        color: black;
-    }
-</style>
-
 <body>
 
-<div th:replace="fragments::menuLogueadoEmpresa(company=${company})"/>
+<div th:replace="fragments::menuLogueado(customer=${customer})"/>
 
 <div class="container-fluid">
 
@@ -33,24 +24,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tituloModal"></h5>
+                    <h5 class="modal-title" id="tituloModal">Hacer reserva</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <form id="formCrear" method="post"
-                      th:action="@{/empresas/{idCompany}/reservas/nueva(idCompany=${company.id})}"
+                      th:action="@{/clientes/{idCustomer}/empresas/{idCompany}/reservas/nueva(idCustomer=${customer.id}, idCompany=${company.id})}"
                       th:object="${crearAppointmentData}">
                     <div class="modal-body">
                         <div class="form-row">
                             <div class="col">
-                                <label for="username" class="form-label">
-                                    <a id="tooltip1" href="#" data-toggle="tooltip" title="Tiene cuenta">Nombre de usuario</a>
-                                    &nbsp;/&nbsp;
-                                    <a id="tooltip2" href="#" data-toggle="tooltip" title="NO tiene cuenta">Nombre invitado</a>
-                                </label>
-                                <input id="idappointment" type="hidden" class="form-control" name="idappointment">
-                                <input id="username" type="text" class="form-control" name="username" required>
+                                <input id="username" type="hidden" class="form-control" name="username" required>
                             </div>
                         </div>
                         <br>
@@ -81,31 +66,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button id="btnEliminar" type="button" th:onclick="'del()'" class="btn btn-danger">Eliminar</button>
-                        <button id="btnAceptar" type="submit" class="btn btn-primary">Aceptar</button>
+                        <button id="btnAceptar" type="submit" class="btn btn-primary">Reservar</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Modal primer inicio sesión -->
-    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">
-                        ¡Bienvenido!
-                    </h5>
-                </div>
-                <div class="modal-body">
-                    Para poder comenzar necesitamos saber una serie de detalles de la empresa. Tan sólo será un par de minutos.
-                </div>
-                <div class="modal-footer">
-                    <a class="btn btn-warning" th:href="@{'/empresas/' + ${company.getId()} + '/cuenta'}" role="button">Entendido</a>
-                </div>
             </div>
         </div>
     </div>
@@ -118,10 +81,6 @@
 <script th:inline="javascript">
     var horaApertura = [[${company.getStartday()}]];
     var horaCierre = [[${company.getFinishday()}]];
-
-    function servicioActivo(servicio, idLabour){
-        return servicio.isActivated() && servicio.id == idLabour;
-    }
 
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -148,43 +107,12 @@
             'success'
         )
     }
-
-    function del() {
-        var idCita = document.getElementById("idappointment").value;
-        var url = "/empresas/" + [[${company.getId()}]] + "/reservas/" + idCita + "/eliminar";
-
-        Swal.fire({
-            title: 'Advertencia',
-            text: "¿Estás seguro de eliminar la reserva?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'No, cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(url, {
-                    method: 'DELETE',
-                }).then((res) => location.reload());
-            }
-        })
-    }
-
-    window.onload = function() {
-        if([[${company.category.name}]] === "Categoria" || [[${company.startday}]] == null || [[${company.finishday}]] == null){
-            $('#staticBackdrop').modal('show');
-        }
-        var tooltip1 = document.getElementById("tooltip1");
-        new bootstrap.Tooltip(tooltip1);
-        var tooltip2 = document.getElementById("tooltip2");
-        new bootstrap.Tooltip(tooltip2);
-    };
     var reservas =[[${reservasCalendario}]];
+    var customerUsername = [[${customer.getUsername()}]];
 </script>
 <script th:src="@{/js/main.min.js}"></script>
 <script th:src="@{/js/es.js}"></script>
-<script th:src="@{/js/calendar.js}"></script>
+<script th:src="@{/js/horarioEmpresa.js}"></script>
 
 
 </body>

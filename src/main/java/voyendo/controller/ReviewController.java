@@ -96,6 +96,63 @@ public class ReviewController {
         return "cuentaEmpresa";
     }
 
+
+    @RequestMapping(value = "/empresas/{id}/detalles/reviews", method = RequestMethod.GET)
+    public String listadoReviewsDetallesEmpresa(@PathVariable(value="id") Long idCompany, Model model, HttpSession session,
+                                  @ModelAttribute("exito") String exito, @ModelAttribute("error") String error,
+                                  @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size,
+                                  @ModelAttribute CrearReviewData crearReviewData,
+                                  @ModelAttribute ReviewEliminarData reviewEliminarData) {
+
+        Company company = companyService.findById(idCompany);
+        if (company == null) {
+            throw new CompanyNotFoundException();
+        }
+        model.addAttribute("company", company);
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(3);
+
+        Page<Review> reviewPage = reviewService.findPaginated(idCompany, PageRequest.of(currentPage - 1, pageSize));
+
+        model.addAttribute("reviewPage", reviewPage);
+
+        int totalPages = reviewPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("paginaActual", currentPage);
+        }
+
+        Iterable<Category> categorias = categoryService.findAll();
+        model.addAttribute("categorias", categorias);
+        model.addAttribute("company", company);
+        model.addAttribute("reviews", company.getReviews());
+        model.addAttribute("positiveNumber", company.getPositiveReviews());
+        model.addAttribute("negativeNumber", company.getNegativeReviews());
+        model.addAttribute("neutralNumber", company.getNeutralReviews());
+        model.addAttribute("valoracionMedia", company.valoracionMedia());
+
+        Long idCustomer = managerUserSession.usuarioLogeado(session);
+        if(idCustomer == null){
+            throw new CustomerNotFoundException();
+        }else{
+            Customer customer = customerService.findById(idCustomer);
+            model.addAttribute("customer", customer);
+            Review reviewHecha = customer.getReviewEmpresa(company.getId());
+            if(reviewHecha != null ){
+                crearReviewData.setIdreview(reviewHecha.getId());
+                crearReviewData.setComentario(reviewHecha.getText());
+                crearReviewData.setValuation(reviewHecha.getValuation());
+                reviewEliminarData.setReviewid(reviewHecha.getId());
+            }
+        }
+
+        return "detallesEmpresa";
+    }
+
     @PostMapping("/empresas/{idCompany}/reviews/nueva")
     public String crearEditarLabour(@PathVariable(value="idCompany") Long idCompany,
                                     @ModelAttribute CrearReviewData crearReviewData, Model model,

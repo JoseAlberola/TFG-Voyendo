@@ -102,7 +102,7 @@ public class CustomerController {
     }
 
     @GetMapping("/empresas/{id}/horario")
-    public String home(@PathVariable(value="id") Long idCompany, Model model, HttpSession session,
+    public String horarioEmpresa(@PathVariable(value="id") Long idCompany, Model model, HttpSession session,
                        @ModelAttribute("exito") String exito, @ModelAttribute("error") String error) {
 
         Long idCustomer = managerUserSession.usuarioLogeado(session);
@@ -118,6 +118,7 @@ public class CustomerController {
         }
 
         model.addAttribute("company", company);
+        model.addAttribute("customer", customer);
         model.addAttribute("crearAppointmentData", new CrearAppointmentData());
         List<ReservaCalendario> reservasCalendario =
                 appointmentService.convertirAppointmentsAReservasCalendario(companyService.obtenerReservas(company));
