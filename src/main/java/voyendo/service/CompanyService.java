@@ -1,6 +1,5 @@
 package voyendo.service;
 
-import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import voyendo.service.exception.CategoryServiceException;
 import voyendo.service.exception.CompanyServiceException;
 import voyendo.service.exception.DateFormatException;
-import voyendo.service.exception.UsuarioServiceException;
+import voyendo.service.exception.CustomerServiceException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -96,22 +95,28 @@ public class CompanyService {
                 registroDataCompany.getAddress(), category);
         company.setPhone(registroDataCompany.getPhone());
         company.setPassword(managerUserSession.encryptPassword(registroDataCompany.getPassword()));
+        company.setImg1("defaultAvatar.jpg");
+        company.setImg2("defaultAvatar.jpg");
+        company.setImg3("defaultAvatar.jpg");
+        company.setImg4("defaultAvatar.jpg");
+        company.setImg5("defaultAvatar.jpg");
         return company;
     }
 
-    // Se añade un usuario en la aplicación.
-    // El email y password del usuario deben ser distinto de null
-    // El email no debe estar registrado en la base de datos
+    // Se añade una empresa en la aplicación.
+    // El username y password deben ser distinto de null
+    // El username no debe estar registrado en la base de datos
     @Transactional
     public Company registrar(Company company) {
         Optional<Company> companyBD = companyRepository.findByUsername(company.getUsername());
         if (companyBD.isPresent())
-            throw new UsuarioServiceException("La empresa " + company.getUsername() + " ya está registrada");
+            throw new CustomerServiceException("La empresa " + company.getUsername() + " ya está registrada");
         else if (company.getUsername() == null)
-            throw new UsuarioServiceException("La empresa no tiene username");
+            throw new CustomerServiceException("La empresa no tiene username");
         else if (company.getPassword() == null)
-            throw new UsuarioServiceException("La empresa no tiene password");
-        else return companyRepository.save(company);
+            throw new CustomerServiceException("La empresa no tiene password");
+        else
+            return companyRepository.save(company);
     }
 
     @Transactional(readOnly = true)
@@ -156,7 +161,7 @@ public class CompanyService {
         if (company == null) {
             throw new CompanyServiceException("No existe empresa con id " + idCompany);
         }
-        company.setPassword(modificarCompanyData.getNewPassword());
+        company.setPassword(managerUserSession.encryptPassword(modificarCompanyData.getNewPassword()));
         companyRepository.save(company);
         return company;
     }

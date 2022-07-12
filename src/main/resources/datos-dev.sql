@@ -600,8 +600,6 @@ VALUES('2022-07-04', '09:30', '09:45', '3', '12', '9', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-04', '10:00', '10:30', '3', '35', '10', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
-VALUES('2022-07-04', '10:30', '10:45', '3', '1', '9', '1');
-INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-04', '10:45', '11:00', '3', '15', '11', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-04', '12:30', '13:00', '3', '20', '10', '1');
@@ -663,6 +661,8 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-07-25', '16:00', '16:15', '3', '32', '11', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-25', '17:00', '17:30', '3', '19', '10', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
+VALUES('2022-07-29', '10:30', '10:45', '3', '1', '9', '1');
 
 
 -- INSERTAMOS RESERVAS EN EMPRESA CON ID 12 --
@@ -707,8 +707,6 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-07-04', '09:30', '10:00', '12', '12', '12', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-04', '10:00', '10:30', '12', '35', '15', '1');
-INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
-VALUES('2022-07-04', '10:30', '11:30', '12', '1', '13', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-04', '11:30', '12:30', '12', '15', '13', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
@@ -771,3 +769,5 @@ INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, lab
 VALUES('2022-07-25', '16:00', '16:30', '12', '32', '12', '1');
 INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
 VALUES('2022-07-25', '17:00', '17:30', '12', '19', '12', '1');
+INSERT INTO appointments (date, starthour, endhour, company_id, customer_id, labour_id, appointment_type)
+VALUES('2022-07-29', '10:30', '11:30', '12', '1', '13', '1');

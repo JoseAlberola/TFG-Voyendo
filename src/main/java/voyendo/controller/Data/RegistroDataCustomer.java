@@ -10,6 +10,8 @@ public class RegistroDataCustomer {
     @Email
     private String mail;
     private String password;
+    private String newPassword;
+    private String confirmNewPassword;
     private String name;
     private String phone;
     private String gender;
@@ -34,6 +36,22 @@ public class RegistroDataCustomer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 
     public String getName() { return name; }

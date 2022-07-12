@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import voyendo.authentication.ManagerUserSession;
+import voyendo.controller.Data.ModificarCompanyData;
 import voyendo.controller.Data.RegistroDataCustomer;
 import voyendo.model.*;
-import voyendo.service.exception.UsuarioServiceException;
+import voyendo.service.exception.CompanyServiceException;
+import voyendo.service.exception.CustomerServiceException;
 
 import java.util.Optional;
 
@@ -46,6 +48,7 @@ public class CustomerService {
                 registroDataCustomer.getGender(), registroDataCustomer.getDateBirthday());
         customer.setPhone(registroDataCustomer.getPhone());
         customer.setPassword(managerUserSession.encryptPassword(registroDataCustomer.getPassword()));
+        customer.setImg1("defaultAvatar.jpg");
         return customer;
     }
 
@@ -56,11 +59,11 @@ public class CustomerService {
     public Customer registrar(Customer customer) {
         Optional<Customer> customerBD = customerRepository.findByUsername(customer.getUsername());
         if (customerBD.isPresent())
-            throw new UsuarioServiceException("El cliente " + customer.getUsername() + " ya está registrado");
+            throw new CustomerServiceException("El cliente " + customer.getUsername() + " ya está registrado");
         else if (customer.getUsername() == null)
-            throw new UsuarioServiceException("El cliente no tiene username");
+            throw new CustomerServiceException("El cliente no tiene username");
         else if (customer.getPassword() == null)
-            throw new UsuarioServiceException("El cliente no tiene password");
+            throw new CustomerServiceException("El cliente no tiene password");
         else return customerRepository.save(customer);
     }
 
@@ -79,8 +82,44 @@ public class CustomerService {
         return customerRepository.findById(usuarioId).orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public Customer findByMail(String mail) {
-        return customerRepository.findByMail(mail).orElse(null);
+    @Transactional
+    public Customer modificarInfo(Long idCustomer, RegistroDataCustomer registroDataCustomer) {
+        logger.debug("Modificando cliente " + idCustomer + " - " + registroDataCustomer.getName());
+        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+        if (customer == null) {
+            throw new CustomerServiceException("No existe cliente con id " + idCustomer);
+        }
+        customer.setMail(registroDataCustomer.getMail());
+        customer.setName(registroDataCustomer.getName());
+        customer.setPhone(registroDataCustomer.getPhone());
+        customer.setBirthday(registroDataCustomer.getDateBirthday());
+        customer.setGender(registroDataCustomer.getGender());
+        customerRepository.save(customer);
+        return customer;
+    }
+
+    @Transactional
+    public Customer modificarPassword(Long idCustomer, RegistroDataCustomer registroDataCustomer) {
+        logger.debug("Modificando contraseña del cliente " + idCustomer);
+        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+        if (customer == null) {
+            throw new CustomerServiceException("No existe cliente con id " + idCustomer);
+        }
+        customer.setPassword(managerUserSession.encryptPassword(registroDataCustomer.getNewPassword()));
+        customerRepository.save(customer);
+        return customer;
+    }
+
+    @Transactional
+    public Customer actualizarImagen(Long idCustomer, String fileName) {
+        logger.debug("Actualizando imagen del cliente " + idCustomer);
+        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+        if (customer == null) {
+            throw new CustomerServiceException("No existe cliente con id " + idCustomer);
+        }
+
+        customer.setImg1(fileName.toString());
+        customerRepository.save(customer);
+        return customer;
     }
 }

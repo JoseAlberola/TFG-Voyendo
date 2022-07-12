@@ -32,6 +32,8 @@ public class Customer implements Serializable {
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date birthday;
+    @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
+    private String img1;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -121,8 +123,20 @@ public class Customer implements Serializable {
         return birthday;
     }
 
+    public String getBirthdayString() {
+        return birthday.toString();
+    }
+
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    public String getImg1() {
+        return img1;
+    }
+
+    public void setImg1(String img1) {
+        this.img1 = img1;
     }
 
     public Set<NormalAppointment> getAppointments() {

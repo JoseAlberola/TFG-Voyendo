@@ -1,5 +1,9 @@
 package voyendo.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import voyendo.controller.Data.CrearAppointmentData;
 import voyendo.controller.ReservaCalendario;
 import voyendo.model.*;
@@ -16,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -201,13 +206,14 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void eliminarReserva(Long idAppointment) {
+    public boolean eliminarReserva(Long idAppointment) {
         logger.debug("Eliminando reserva " + idAppointment);
         Appointment appointment = appointmentRepository.findById(idAppointment).orElse(null);
         if (appointment == null) {
             throw new AppointmentServiceException("No existe reserva con id " + idAppointment);
         }
         appointmentRepository.delete(appointment);
+        return true;
     }
 
     @Transactional
@@ -238,5 +244,39 @@ public class AppointmentService {
             return true;
         }
         return false;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> citasProximasCliente(Long idCustomer){
+        return appointmentRepository.citasProximasCliente(idCustomer);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> citasAntiguasCliente(Long idCustomer){
+        return appointmentRepository.citasAntiguasCliente(idCustomer);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> citasDelCliente(Long idCustomer){
+        return appointmentRepository.citasDelCliente(idCustomer);
+    }
+
+    public Page<Appointment> paginar(Pageable pageable, List<Appointment> listaReservas) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<Appointment> list;
+
+        if (listaReservas.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, listaReservas.size());
+            list = listaReservas.subList(startItem, toIndex);
+        }
+
+        Page<Appointment> listPage
+                = new PageImpl<Appointment>(list, PageRequest.of(currentPage, pageSize), listaReservas.size());
+
+        return listPage;
     }
 }

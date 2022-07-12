@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments::head(titulo='Cuenta cliente')"></div>
+    <link rel="stylesheet" href="/css/styleCuentaEmpresa.css">
+</head>
+
+<body>
+
+<div th:replace="fragments::menuLogueado(customer=${customer})"/>
+
+
+<div class="container emp-profile">
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" enctype="multipart/form-data" id="formImg1"
+                  th:action="@{/clientes/{idCustomer}/image/upload(idCustomer=${customer.id})}">
+                <div class="profile-img">
+                    <img th:src="@{'/recursos-usuarios/' + ${customer.getImg1()}}" th:alt="${customer.getImg1()}" />
+                    <div class="file btn btn-lg btn-primary">
+                        Editar
+                        <input type="file" name="file" accept="image/*" class="form-control" id="imagen1"
+                               onchange="imgCambio()" required />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <div class="profile-head">
+                <form id="formCustomer" method="post" th:action="@{/clientes/{id}/modificar(id=${customer.getId()})}"
+                    th:object="${registroDataCustomer}">
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="username" class="form-label">Username</label>
+                                <input id="username" type="text" class="form-control" name="username" th:field="*{username}" readonly />
+                                <small id="usernameHelpText" class="form-text text-muted">
+                                    No puedes modificar tu nombre de usuario.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mail" class="form-label">Correo electrónico</label>
+                                <input id="mail" type="email" class="form-control" name="mail" th:field="*{mail}" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nombre completo</label>
+                                <input id="name" type="text" class="form-control" name="name" th:field="*{name}" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Teléfono</label>
+                                <input id="phone" type="number" minlength="9" maxlength="9" name="phone" class="form-control" th:field="*{phone}"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="birthday" class="form-label">Fecha de nacimiento</label>
+                                <input id="birthday" type="date" class="form-control" name="birthday" th:field="*{birthday}" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="maxl">
+                                    <label class="radio inline padding-right-10">
+                                        <input type="radio" name="gender" value="male" th:field="*{gender}" checked required>
+                                        <span> Hombre </span>
+                                    </label>
+                                    <label class="radio inline ml-3">
+                                        <input type="radio" name="gender" value="female" th:field="*{gender}">
+                                        <span>Mujer </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <div style="text-align: right">
+                                <input type="submit" class="btn btn-dark" value="Modificar"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form id="formPasswordCustomer" method="post" th:action="@{/clientes/{id}/modificarPassword(id=${customer.getId()})}"
+                      th:object="${registroDataCustomer}" class="mt-4">
+                    <div class="row register-form">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Contraseña actual</label>
+                                <input id="password" type="password" class="form-control" name="password" th:field="*{password}" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="newPassword" class="form-label">Contraseña nueva</label>
+                                <input id="newPassword" type="password" class="form-control" name="newPassword" th:field="*{newPassword}" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="confirmNewPassword" class="form-label">Repetir contraseña nueva</label>
+                                <input id="confirmNewPassword" type="password" class="form-control" name="confirmNewPassword" th:field="*{confirmNewPassword}" required/>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div style="text-align: right">
+                                <input type="submit" class="btn btn-dark" value="Modificar"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+
+<script th:inline="javascript">
+    var formImg1 = document.getElementById("formImg1");
+
+    function imgCambio(){
+        formImg1.submit();
+    }
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    var error = [[${error}]];
+    if(error != null && error !== ''){
+        swalWithBootstrapButtons.fire(
+            'Error',
+            error,
+            'error'
+        )
+    }
+
+    var exito = [[${exito}]];
+    if(exito != null && exito !== ''){
+        swalWithBootstrapButtons.fire(
+            '¡Hecho!',
+            exito,
+            'success'
+        )
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments::head(titulo='Mis reservas')"></div>
+    <link rel="stylesheet" href="/css/styleMisReservas.css">
+</head>
+
+<body>
+
+<div th:replace="fragments::menuLogueado(customer=${customer})"/>
+
+<div class="container-fluid">
+
+    <div class="row mt-4">
+        <div class="p-2 contenedor-botones-superiores">
+            <a class="btn btn-primary botones-selectores mr-4" th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo='todas')}"
+               th:classappend="${tipoLista == 'todas'} ? 'btn-pulsado' : ''"/>TODAS</a>
+            <a class="btn btn-primary botones-selectores mr-4" th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo='proximas')}"
+               th:classappend="${tipoLista == 'proximas'} ? 'btn-pulsado' : ''"/>PRÓXIMAS</a>
+            <a class="btn btn-primary botones-selectores" th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo='antiguas')}"
+               th:classappend="${tipoLista == 'antiguas'} ? 'btn-pulsado' : ''"/>ANTIGUAS</a>
+        </div>
+    </div>
+
+    <br/>
+    <!-- Listado empresas -->
+    <p th:text="${reservas.size()} + ' Reservas'" class="texto-resultados-obtenidos"></p>
+    <div class="card card-container-company mt-3" th:each="reserva, iStat: ${listPage.content}">
+        <div class="card-body contenido-card">
+            <div class="row">
+                <div class="col-md-3 d-flex justify-content-center align-items-center col-imagen-company">
+                    <img th:src="@{'/recursos-usuarios/' + ${reserva.getCompany().getImg1()}}" th:alt="${reserva.getCompany().getImg1()}"
+                         class="img-fluid shadow-1 imagen-card-company"/>
+                </div>
+                <div class="col-md-9">
+                    <p class="fw-bold mt-4 mb-3 text-uppercase nombre-company">
+                        <strong th:text="${reserva.getCompany().getName()}"></strong>
+                        <small th:text="'  (' + ${reserva.getLabour().getName()} + ')'"></small>
+                    </p>
+                    <p class="text-muted fw-light mb-3 text-company">
+                        <span th:text="${reserva.getDate()}"></span>
+                    </p>
+                    <p class="text-muted fw-light mb-4 text-company" th:text="${reserva.getStarthour()} + ' - ' + ${reserva.getEndhour()}"></p>
+                    <button id="btnCancelar" type="button" form="formEliminar" class="btn btn-danger cancelar-reserva"
+                            th:onclick="'eliminar(' + ${reserva.id} + ')'">Cancelar reserva</button>
+                </div>
+            </div>
+            <a th:href="@{'/empresas/' + ${reserva.getCompany().getId()} + '/detalles'}" class="stretched-link"></a>
+        </div>
+    </div>
+    <form id="formEliminar" method="post" th:if="${tipoLista == 'proximas'}"
+          th:action="'/'">
+    </form>
+    <br/>
+    <!-- Paginación -->
+    <div style="display: flex">
+        <nav th:if="${listPage.totalPages > 0}" aria-label="Lista de reservas" class="mb-5" style="margin: auto">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${paginaActual <= 1} ? disabled : ''">
+                    <a class="page-link" aria-label="Previous"
+                       th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo=${tipoLista}, size=${listPage.size}, page=${paginaActual}-1)}">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}" th:classappend="${paginaActual == pageNumber} ? active : ''">
+                    <a class="page-link"
+                       th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo=${tipoLista}, size=${listPage.size}, page=${pageNumber})}"
+                       th:text="${pageNumber}"
+                    ></a>
+                </li>
+                <li class="page-item" th:classappend="${paginaActual >= pageNumbers.size()} ? disabled : ''">
+                    <a class="page-link" aria-label="Next"
+                       th:href="@{/clientes/{id}/reservas(id=${customer.id}, tipo=${tipoLista}, size=${listPage.size}, page=${paginaActual}+1)}">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+<script th:inline="javascript">
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    var error = [[${error}]];
+    if(error != null && error !== ''){
+        swalWithBootstrapButtons.fire(
+            'Error',
+            error,
+            'error'
+        )
+    }
+
+    var exito = [[${exito}]];
+    if(exito != null && exito !== ''){
+        swalWithBootstrapButtons.fire(
+            '¡Hecho!',
+            exito,
+            'success'
+        )
+    }
+
+    function eliminar(idReserva) {
+        var urlAction = "/clientes/" + [[${customer.id}]] + "/reservas/" + idReserva + "/cancelar";
+        console.log(urlAction);
+        var formularioEliminar = document.getElementById("formEliminar");
+        formularioEliminar.action = urlAction;
+        Swal.fire({
+            title: 'Advertencia',
+            text: "¿Estás seguro de cancelar la reserva?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formularioEliminar.submit();
+            }
+        })
+    };
+</script>
+</html>

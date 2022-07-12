@@ -123,4 +123,13 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Long>
             "a.labour_id = l.id INNER JOIN COMPANIES c ON a.company_id = c.id WHERE date BETWEEN CURDATE() - INTERVAL 1 " +
             "MONTH AND CURDATE() AND c.category_id = ?1 GROUP BY a.company_id ORDER BY suma DESC LIMIT 3")
     List<Double> ingresosTotalesTopTresEmpresasEsteMes(Long idCategory);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM APPOINTMENTS WHERE customer_id = ?1 AND date >= CURDATE() ORDER BY date DESC")
+    List<Appointment> citasProximasCliente(Long idCustomer);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM APPOINTMENTS WHERE customer_id = ?1 AND date < CURDATE() ORDER BY date DESC")
+    List<Appointment> citasAntiguasCliente(Long idCustomer);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM APPOINTMENTS WHERE customer_id = ?1 ORDER BY date DESC")
+    List<Appointment> citasDelCliente(Long idCustomer);
 }

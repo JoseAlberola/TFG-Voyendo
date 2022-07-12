@@ -12,11 +12,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.Data.ModificarCompanyData;
 import voyendo.controller.exception.CompanyNotFoundException;
+import voyendo.controller.exception.CustomerNotFoundException;
 import voyendo.model.Category;
 import voyendo.model.Company;
+import voyendo.model.Customer;
 import voyendo.model.Review;
 import voyendo.service.CategoryService;
 import voyendo.service.CompanyService;
+import voyendo.service.CustomerService;
 import voyendo.service.ReviewService;
 
 import javax.servlet.http.HttpSession;
@@ -35,6 +38,9 @@ public class FileUploadController {
 
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    CustomerService customerService;
 
     @Autowired
     CategoryService categoryService;
@@ -76,5 +82,38 @@ public class FileUploadController {
         }
         flash.addFlashAttribute("exito", "Imagen actualizada.");
         return "redirect:/empresas/" + idCompany + "/cuenta";
+    }
+
+    @PostMapping("/clientes/{id}/image/upload")
+    public String uploadImagenEmpresa(@PathVariable(value="id") Long idCustomer,
+                                      Model model, HttpSession session, RedirectAttributes flash,
+                                      @RequestParam("file") MultipartFile imagen){
+
+        managerUserSession.comprobarUsuarioLogeado(session, idCustomer);
+
+        Customer customer = customerService.findById(idCustomer);
+        if (customer == null) {
+            throw new CustomerNotFoundException();
+        }
+
+        if(!imagen.isEmpty()){
+            try {
+                byte[] bytesImagen = imagen.getBytes();
+                StringBuilder nuevoFileName = new StringBuilder();
+                nuevoFileName.append(idCustomer.toString());
+                nuevoFileName.append("-");
+                nuevoFileName.append(1);
+                nuevoFileName.append("-");
+                nuevoFileName.append(imagen.getOriginalFilename());
+                Path rutaCompleta = Paths.get(uploadDirectory + "//" + nuevoFileName.toString());
+                Files.write(rutaCompleta, bytesImagen);
+                customerService.actualizarImagen(idCustomer, nuevoFileName.toString());
+            } catch (IOException e) {
+                flash.addFlashAttribute("error", "No se ha podido actualizar la imagen.");
+                e.printStackTrace();
+            }
+        }
+        flash.addFlashAttribute("exito", "Imagen actualizada.");
+        return "redirect:/clientes/" + idCustomer + "/cuenta";
     }
 }
