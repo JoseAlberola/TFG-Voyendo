@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import voyendo.controller.graficos.HistoricoReservasGrafico;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public interface AppointmentRepository extends CrudRepository<Appointment, Long> {
@@ -97,12 +98,26 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Long>
     @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 AND labour_id = ?2 ORDER BY DATE")
     List<Date> fechasReservasPorServicio(Long idCompany, Long idLabour);
 
-    @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1")
+    @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 ORDER BY DATE")
     List<Date> fechasTodasLasReservas(Long idCompany);
+
+    @Query(nativeQuery = true, value = "SELECT a.date FROM APPOINTMENTS a INNER JOIN COMPANIES c ON a.company_id = c.id " +
+            "where c.category_id = ?1 ORDER BY date")
+    List<Date> fechasTodasLasReservasDelSector(Long idCategory);
 
     @Query(nativeQuery = true, value = "SELECT  COUNT(*) as total FROM APPOINTMENTS WHERE company_id = ?1 AND labour_id = ?2 " +
             "GROUP BY year(DATE), MONTH(DATE) ORDER BY year(DATE), MONTH(DATE)")
     List<Integer> reservasPorServicioMes(Long idCompany, Long idLabour);
+
+    @Query(nativeQuery = true, value = "SELECT ROUND(SUM(price)) as ingresos FROM APPOINTMENTS a INNER JOIN LABOURS l ON " +
+            "a.labour_id = l.id WHERE a.company_id = ?1 GROUP BY year(DATE), MONTH(DATE) ORDER BY year(DATE), MONTH(DATE)")
+    List<Integer> ingresosPorMes(Long idCompany);
+
+    @Query(nativeQuery = true, value = "Select resultado FROM (SELECT SUM(l.price), COUNT(distinct c.id), CONCAT(YEAR(a.date)," +
+            " MONTH(a.date)) fecha, (SUM(l.price)/ COUNT(distinct c.name)) as resultado, FROM COMPANIES c INNER JOIN LABOURS l " +
+            "ON c.id = l.company_id INNER JOIN APPOINTMENTS a on l.id = a.labour_id WHERE c.category_id = ?1 GROUP BY fecha " +
+            "ORDER BY fecha) b")
+    List<Integer> mediaIngresosPorMesDelSector(Long idCategory);
 
     @Query(nativeQuery = true, value = "SELECT DATE FROM APPOINTMENTS WHERE company_id = ?1 ORDER BY DATE LIMIT 1")
     Date fechaPrimeraReserva(Long idCompany);
@@ -132,4 +147,14 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Long>
 
     @Query(nativeQuery = true, value = "SELECT * FROM APPOINTMENTS WHERE customer_id = ?1 ORDER BY date DESC")
     List<Appointment> citasDelCliente(Long idCustomer);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(DISTINCT customer_id) FROM APPOINTMENTS WHERE company_id = ?1")
+    int numeroClientes(Long idCompany);
+
+    @Query(nativeQuery = true, value = "SELECT a.customer_id FROM APPOINTMENTS a WHERE a.company_id = ?1 GROUP BY a.customer_id")
+    List<Integer> listaDeClientes(Long idCompany);
+
+    @Query(nativeQuery = true, value = "select date, count(*) from appointments where date between curdate() - interval 6 " +
+            "month and curdate() and company_id = ?1 GROUP BY year(date), month(date), day(date) order by date")
+    List<Object[]> numeroReservasPorDiaUltimos6Meses(Long idCategory);
 }

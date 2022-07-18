@@ -118,6 +118,13 @@
 <script th:inline="javascript">
     var horaApertura = [[${company.getStartday()}]];
     var horaCierre = [[${company.getFinishday()}]];
+    var lunes = [[${company.isLunes}]];
+    var martes = [[${company.isMartes}]];
+    var miercoles = [[${company.isMiercoles}]];
+    var jueves = [[${company.isJueves}]];
+    var viernes = [[${company.isViernes}]];
+    var sabado = [[${company.isSabado}]];
+    var domingo = [[${company.isDomingo}]];
 
     function servicioActivo(servicio, idLabour){
         return servicio.isActivated() && servicio.id == idLabour;

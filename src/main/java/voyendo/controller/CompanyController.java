@@ -7,6 +7,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import voyendo.authentication.ManagerUserSession;
 import voyendo.controller.Data.*;
 import voyendo.controller.exception.CompanyNotFoundException;
+import voyendo.controller.graficos.EjeHeatMapGrafico;
+import voyendo.controller.graficos.HeatMapGrafico;
 import voyendo.model.Category;
 import voyendo.model.Company;
 import voyendo.model.Labour;
@@ -25,6 +27,7 @@ import voyendo.service.ReviewService;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -57,6 +60,13 @@ public class CompanyController {
         modificarCompanyData.setStartday(company.getStartday());
         modificarCompanyData.setFinishday(company.getFinishday());
         modificarCompanyData.setCategory(company.getCategory());
+        modificarCompanyData.setLunes(company.isLunes());
+        modificarCompanyData.setMartes(company.isMartes());
+        modificarCompanyData.setMiercoles(company.isMiercoles());
+        modificarCompanyData.setJueves(company.isJueves());
+        modificarCompanyData.setViernes(company.isViernes());
+        modificarCompanyData.setSabado(company.isSabado());
+        modificarCompanyData.setDomingo(company.isDomingo());
     }
 
     @GetMapping("/empresas/{id}/cuenta")
@@ -195,7 +205,17 @@ public class CompanyController {
         model.addAttribute("labelsPieChartAppointmentsLabour", companyService.obtenerServicios(company));
         model.addAttribute("historicalAppointments", companyService.obtenerHistoricoReservas(company));
         model.addAttribute("historicalNewCustomers", companyService.obtenerHistoricoNuevosClientes(company));
-        model.addAttribute("rankingCards", companyService.obtenerCartasRankingEstadisticas(company));
+        if(company.isPremium()){
+            model.addAttribute("rankingCards", companyService.obtenerCartasRankingEstadisticas(company));
+            model.addAttribute("historicalRevenue", companyService.obtenerHistoricoIngresos(company));
+            model.addAttribute("valuesPieChartClientesCubiertos", companyService.obtenerNumeroClientesDelTotal(company));
+            model.addAttribute("heatMap", companyService.obtenerHeatMap(company));
+        }else {
+            model.addAttribute("rankingCards", null);
+            model.addAttribute("historicalRevenue", null);
+            model.addAttribute("valuesPieChartClientesCubiertos", new int[] {0, 0});
+            model.addAttribute("heatMap", new HeatMapGrafico(null, null, null, null, 0, new EjeHeatMapGrafico(null, null)));
+        }
         return "estadisticas";
     }
 

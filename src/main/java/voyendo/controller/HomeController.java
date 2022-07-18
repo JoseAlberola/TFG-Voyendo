@@ -135,19 +135,4 @@ public class HomeController {
         return getDatosHome(model, page, size, customer, listaEmpresas);
     }
 
-    @GetMapping("/about")
-    public String about(Model model, HttpSession session) {
-        Long idUsuario = managerUserSession.usuarioLogeado(session);
-        if(idUsuario == null){
-            model.addAttribute("usuario", null);
-        }else if(managerUserSession.esEmpresa(idUsuario)){
-            Company company = companyService.findById(idUsuario);
-            model.addAttribute("usuario", company);
-        }else{
-            Customer customer = customerService.findById(idUsuario);
-            model.addAttribute("usuario", customer);
-        }
-        return "about";
-    }
-
 }

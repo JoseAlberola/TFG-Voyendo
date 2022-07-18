@@ -198,7 +198,7 @@
         <div class="col-md-4">
             <div class="card-top">
                 <div class="card-top-content">
-                    <span class="card-top-title">Empresas con más ingresos mensuales</span><br/>
+                    <span class="card-top-title">Empresas con más ingresos este mes</span><br/>
                     <span class="card-top-number1"
                           th:if="${rankingCards.size() > 0 and rankingCards.get(1).hayPrimerPuesto()}"
                           th:text="${rankingCards.get(1).getFormatoPodio(0)}">
@@ -249,6 +249,21 @@
         </div>
     </div>
     <br/>
+    <div class="row" th:if="${company.isPremium()}">
+        <div class="col-md-6">
+            <div id='historicalRevenueGraph'></div>
+        </div>
+        <div class="col-md-6">
+            <div id='pieClientesDelTotal'></div>
+        </div>
+    </div>
+    <br/>
+    <div class="row" th:if="${company.isPremium()}">
+        <div class="col-md-12">
+            <div id='heatMap'></div>
+        </div>
+    </div>
+    <br/>
 </div>
 
 
@@ -274,10 +289,32 @@
     // Line Chart Historial New Customers
     var historialNewCustomersGraph = [[${historicalNewCustomers}]]
 
+    // Line Chart Historial Revenue
+    var historialRevenueGraph;
+
+    // Pie chart Clientes cubiertos del total
+    var clientesPropios;
+    var clientesTotales;
+
+    // HeatMap
+    var heatMap;
+    var ejeXHeatMap;
+
+    if([[${company.isPremium()}]]){
+        console.log("JOSE");
+        historialRevenueGraph = [[${historicalRevenue}]];
+        clientesPropios = [[${valuesPieChartClientesCubiertos[0]}]];
+        clientesTotales = [[${valuesPieChartClientesCubiertos[1]}]];
+        heatMap = [[${heatMap}]];
+        ejeXHeatMap = [[${heatMap.getEjeX()}]];
+    }
+
 </script>
 <script th:src="@{/js/pies.js}"></script>
 <script th:src="@{/js/historicalAppointments.js}"></script>
 <script th:src="@{/js/historicalNewCustomers.js}"></script>
+<script th:src="@{/js/historicalRevenue.js}"></script>
+<script th:src="@{/js/heatMap.js}"></script>
 
 <div th:replace="fragments::javascript"/>
 </body>

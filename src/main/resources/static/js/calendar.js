@@ -1,3 +1,29 @@
+function diaLaboral(dia){
+    switch (dia){
+        case 0:
+            return domingo;
+            break;
+        case 1:
+            return lunes;
+            break;
+        case 2:
+            return martes;
+            break;
+        case 3:
+            return miercoles;
+            break;
+        case 4:
+            return jueves;
+            break;
+        case 5:
+            return viernes;
+            break;
+        case 6:
+            return sabado;
+            break;
+    }
+}
+
 var modalCrearCita = new bootstrap.Modal(document.getElementById('modalCrear'));
 let frm = document.getElementById("formCrear");
 document.addEventListener('DOMContentLoaded', function() {
@@ -19,19 +45,21 @@ document.addEventListener('DOMContentLoaded', function() {
         eventAllow: function (dropInfo, draggedEvent){
             var fechaCierre = dropInfo.startStr.substring(0, 10);
             var fechaCierreDate = new Date(fechaCierre + " " + horaCierre);
-            return dropInfo.end <= fechaCierreDate;
+            return dropInfo.end <= fechaCierreDate && diaLaboral(dropInfo.start.getDay());
         },
         dateClick: function (info){
-            frm.reset();
-            document.getElementById("idappointment").value = 0;
-            document.getElementById("btnEliminar").classList.add("d-none");
-            document.getElementById('start').value = info.dateStr.substring(0, 10);
-            document.getElementById("tituloModal").textContent = "Crear cita";
-            document.getElementById("btnAceptar").textContent = "Aceptar";
-            document.getElementById("optionDefault").hidden = false;
-            document.getElementById("optionDefault").value = "";
-            document.getElementById("optionDefault").text = "Selecciona servicio";
-            modalCrearCita.show();
+            if(diaLaboral(info.date.getDay())){
+                frm.reset();
+                document.getElementById("idappointment").value = 0;
+                document.getElementById("btnEliminar").classList.add("d-none");
+                document.getElementById('start').value = info.dateStr.substring(0, 10);
+                document.getElementById("tituloModal").textContent = "Crear cita";
+                document.getElementById("btnAceptar").textContent = "Aceptar";
+                document.getElementById("optionDefault").hidden = false;
+                document.getElementById("optionDefault").value = "";
+                document.getElementById("optionDefault").text = "Selecciona servicio";
+                modalCrearCita.show();
+            }
         },
         eventClick: function (info){
             document.getElementById("btnEliminar").classList.remove("d-none");

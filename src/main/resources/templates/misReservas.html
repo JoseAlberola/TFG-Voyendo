@@ -24,7 +24,7 @@
     </div>
 
     <br/>
-    <!-- Listado empresas -->
+
     <p th:text="${reservas.size()} + ' Reservas'" class="texto-resultados-obtenidos"></p>
     <div class="card card-container-company mt-3" th:each="reserva, iStat: ${listPage.content}">
         <div class="card-body contenido-card">
@@ -43,7 +43,7 @@
                     </p>
                     <p class="text-muted fw-light mb-4 text-company" th:text="${reserva.getStarthour()} + ' - ' + ${reserva.getEndhour()}"></p>
                     <button id="btnCancelar" type="button" form="formEliminar" class="btn btn-danger cancelar-reserva"
-                            th:onclick="'eliminar(' + ${reserva.id} + ')'">Cancelar reserva</button>
+                            th:onclick="'eliminar(' + ${reserva.id} + ')'" th:if="${tipoLista == 'proximas'}">Cancelar reserva</button>
                 </div>
             </div>
             <a th:href="@{'/empresas/' + ${reserva.getCompany().getId()} + '/detalles'}" class="stretched-link"></a>

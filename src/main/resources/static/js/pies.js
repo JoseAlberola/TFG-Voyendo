@@ -22,7 +22,7 @@ var layoutPieGender = {
         orientation: "h",
     }
 };
-Plotly.newPlot('pieGender', dataPieGender, layoutPieGender);
+Plotly.newPlot('pieGender', dataPieGender, layoutPieGender, {responsive: true});
 
 var dataPieAge = [{
     values: [totalClientesMenores25, totalClientesEntre26y45, totalClientesEntre46y65, totalclientesMayores65],
@@ -45,7 +45,7 @@ var layoutPieAge = {
         orientation: "h"
     }
 };
-Plotly.newPlot('pieAge', dataPieAge, layoutPieAge);
+Plotly.newPlot('pieAge', dataPieAge, layoutPieAge, {responsive: true});
 
 function getColoresPie(array){
     return colorsPie.slice(0, array.length)
@@ -72,4 +72,27 @@ var layoutPieNumberAppointments = {
         orientation: "h"
     }
 };
-Plotly.newPlot('pieNumberAppointments', dataPieNumberAppointments, layoutPieNumberAppointments);
+Plotly.newPlot('pieNumberAppointments', dataPieNumberAppointments, layoutPieNumberAppointments, {responsive: true});
+
+var dataPieClientesDelTotal = [{
+    values: [clientesPropios, clientesTotales],
+    labels: ['Propios', 'Totales'],
+    type: 'pie',
+    marker: {
+        colors: [colorsPie[0], colorsPie[1]]
+    }
+}];
+
+var layoutPieClientesDelTotal = {
+    title: {
+        text: 'Clientes cubiertos en tu zona',
+        size: 18,
+    },
+    legend: {
+        x: 0.5,
+        xanchor: "center",
+        y: 0,
+        orientation: "h",
+    }
+};
+Plotly.newPlot('pieClientesDelTotal', dataPieClientesDelTotal, layoutPieClientesDelTotal, {responsive: true});

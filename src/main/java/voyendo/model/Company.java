@@ -45,6 +45,20 @@ public class Company implements Serializable {
     private String img4;
     @Column(columnDefinition = "varchar(255) default 'defaultAvatar.jpg'")
     private String img5;
+    @Column(columnDefinition = "boolean default true")
+    private boolean lunes;
+    @Column(columnDefinition = "boolean default true")
+    private boolean martes;
+    @Column(columnDefinition = "boolean default true")
+    private boolean miercoles;
+    @Column(columnDefinition = "boolean default true")
+    private boolean jueves;
+    @Column(columnDefinition = "boolean default true")
+    private boolean viernes;
+    @Column(columnDefinition = "boolean default false")
+    private boolean sabado;
+    @Column(columnDefinition = "boolean default false")
+    private boolean domingo;
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -237,6 +251,62 @@ public class Company implements Serializable {
 
     public void setImg5(String img5) {
         this.img5 = img5;
+    }
+
+    public boolean isLunes() {
+        return lunes;
+    }
+
+    public void setLunes(boolean lunes) {
+        this.lunes = lunes;
+    }
+
+    public boolean isMartes() {
+        return martes;
+    }
+
+    public void setMartes(boolean martes) {
+        this.martes = martes;
+    }
+
+    public boolean isMiercoles() {
+        return miercoles;
+    }
+
+    public void setMiercoles(boolean miercoles) {
+        this.miercoles = miercoles;
+    }
+
+    public boolean isJueves() {
+        return jueves;
+    }
+
+    public void setJueves(boolean jueves) {
+        this.jueves = jueves;
+    }
+
+    public boolean isViernes() {
+        return viernes;
+    }
+
+    public void setViernes(boolean viernes) {
+        this.viernes = viernes;
+    }
+
+    public boolean isSabado() {
+        return sabado;
+    }
+
+    public void setSabado(boolean sabado) {
+        this.sabado = sabado;
+    }
+
+    public boolean isDomingo() {
+        return domingo;
+    }
+
+    public void setDomingo(boolean domingo) {
+        this.domingo = domingo;
     }
 
     public Set<Labour> getActivatedLabours() {

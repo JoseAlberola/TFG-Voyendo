@@ -23,57 +23,32 @@ function crearValoresTrace(i){
 }
 
 var trace1 = {
-    type: "scatter",
-    mode: "lines+markers",
-    name: crearNameTrace(0),
-    x: crearFechasTrace(0),
-    y: crearValoresTrace(0),
-    line: {color: '#0062cc'}
+    type: "bar",
+    name: historialRevenueGraph.traces[0].name,
+    x: historialRevenueGraph.traces[0].fechas,
+    y: historialRevenueGraph.traces[0].valores,
+    marker: {color: '#609ddf'}
 }
 
 var trace2 = {
     type: "scatter",
     mode: "lines+markers",
-    name: crearNameTrace(1),
-    x: crearFechasTrace(1),
-    y: crearValoresTrace(1),
+    name: historialRevenueGraph.traces[1].name,
+    x: historialRevenueGraph.traces[1].fechas,
+    y: historialRevenueGraph.traces[1].valores,
     line: {color: '#003D80'}
 }
 
-var trace3 = {
-    type: "scatter",
-    mode: "lines+markers",
-    name: crearNameTrace(2),
-    x: crearFechasTrace(2),
-    y: crearValoresTrace(2),
-    line: {color: "#306DAF"}
-}
-var trace4 = {
-    type: "scatter",
-    mode: "lines+markers",
-    name: crearNameTrace(3),
-    x: crearFechasTrace(3),
-    y: crearValoresTrace(3),
-    line: {color: '#609ddf'}
-}
-var trace5 = {
-    type: "scatter",
-    mode: "lines+markers",
-    name: crearNameTrace(4),
-    x: crearFechasTrace(4),
-    y: crearValoresTrace(4),
-    line: {color: '#BFD8F2'}
-}
-var data = [trace1,trace2,trace3,trace4,trace5];
+var data = [trace1, trace2];
 
 var layout = {
     title: {
-        text: 'Histórico de reservas',
+        text: 'Histórico de ingresos',
         size: 18
     },
     xaxis: {
         autorange: true,
-        range: [historialAppointmentsGraph.inicioRango, historialAppointmentsGraph.finRango],
+        range: [historialRevenueGraph.inicioRango, historialRevenueGraph.finRango],
         rangeselector: {buttons: [
                 {
                     count: 1,
@@ -89,7 +64,7 @@ var layout = {
                 },
                 {step: 'all'}
             ]},
-        rangeslider: {range: [historialAppointmentsGraph.inicioRango, historialAppointmentsGraph.finRango]},
+        rangeslider: {range: [historialRevenueGraph.inicioRango, historialRevenueGraph.finRango]},
         type: 'date'
     },
     yaxis: {
@@ -106,4 +81,4 @@ var layout = {
 
 var config = {locale: 'es', responsive: true};
 
-Plotly.newPlot('historicalAppointmentsGraph', data, layout, config);
+Plotly.newPlot('historicalRevenueGraph', data, layout, config);

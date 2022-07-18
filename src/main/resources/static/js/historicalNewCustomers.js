@@ -48,6 +48,6 @@ var layout = {
     }
 };
 
-var config = {locale: 'es'};
+var config = {locale: 'es', responsive: true};
 
 Plotly.newPlot('historicalNewCustomersGraph', data, layout, config);

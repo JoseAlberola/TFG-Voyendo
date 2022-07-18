@@ -1,5 +1,6 @@
 package voyendo.service;
 
+import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
@@ -8,11 +9,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import voyendo.authentication.ManagerUserSession;
-import voyendo.controller.graficos.HistoricoNuevosClientesGrafico;
-import voyendo.controller.graficos.HistoricoReservasGrafico;
+import voyendo.controller.graficos.*;
 import voyendo.controller.Data.ModificarCompanyData;
 import voyendo.controller.Data.RegistroDataCompany;
-import voyendo.controller.graficos.TraceHistoricoGrafico;
 import voyendo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
@@ -100,6 +104,13 @@ public class CompanyService {
         company.setImg3("defaultAvatar.jpg");
         company.setImg4("defaultAvatar.jpg");
         company.setImg5("defaultAvatar.jpg");
+        company.setLunes(true);
+        company.setMartes(true);
+        company.setMiercoles(true);
+        company.setJueves(true);
+        company.setViernes(true);
+        company.setSabado(false);
+        company.setDomingo(false);
         return company;
     }
 
@@ -175,6 +186,13 @@ public class CompanyService {
         }
         company.setStartday(modificarCompanyData.getStartday());
         company.setFinishday(modificarCompanyData.getFinishday());
+        company.setLunes(modificarCompanyData.isLunes());
+        company.setMartes(modificarCompanyData.isMartes());
+        company.setMiercoles(modificarCompanyData.isMiercoles());
+        company.setJueves(modificarCompanyData.isJueves());
+        company.setViernes(modificarCompanyData.isViernes());
+        company.setSabado(modificarCompanyData.isSabado());
+        company.setDomingo(modificarCompanyData.isDomingo());
 
         // Eliminamos la empresa de la lista de empresas de la antigua categoria
         Category categoriaAntigua = categoryRepository.findById(company.getCategory().getId()).orElse(null);
@@ -679,6 +697,135 @@ public class CompanyService {
         innerJoinHashSet(hashSet, criterioFecha(hashSet, hashSetServicios, fecha));
 
         return  new ArrayList<>(hashSet);
+    }
+
+    @Transactional(readOnly = true)
+    public HistoricoIngresosGrafico obtenerHistoricoIngresos(Company company){
+        ArrayList<TraceHistoricoGrafico> traces = new ArrayList<>();
+
+        ArrayList<Date> fechasT1 = procesarFechas(appointmentRepository.fechasTodasLasReservas(company.getId()));
+        ArrayList<Integer> valoresT1 = new ArrayList<>(appointmentRepository.ingresosPorMes(company.getId()));
+        TraceHistoricoGrafico trace1 = new TraceHistoricoGrafico("Propios", fechasT1, valoresT1);
+        traces.add(trace1);
+
+        ArrayList<Date> fechasT2 = procesarFechas(appointmentRepository.fechasTodasLasReservasDelSector(company.getCategory().getId()));
+        ArrayList<Integer> valoresT2 = new ArrayList<>(appointmentRepository.mediaIngresosPorMesDelSector(company.getCategory().getId()));
+        TraceHistoricoGrafico trace2 = new TraceHistoricoGrafico("Media sector", fechasT2, valoresT2);
+        traces.add(trace2);
+
+        Date fechaInicioRango = appointmentRepository.fechaPrimeraReserva(company.getId());
+        Date fechaFinRango = appointmentRepository.fechaUltimaReserva(company.getId());
+        HistoricoIngresosGrafico grafico = new HistoricoIngresosGrafico(traces, fechaInicioRango, fechaFinRango);
+        return grafico;
+    }
+
+    @Transactional(readOnly = true)
+    public HashSet<Integer> obtenerClientesDiferentesListaDeEmpresas(HashSet<Company> empresas){
+        HashSet<Integer> idsClientes = new HashSet<>();
+        for(Company empresa : empresas){
+            idsClientes.addAll(appointmentRepository.listaDeClientes(empresa.getId()));
+        }
+        return idsClientes;
+    }
+
+    @Transactional(readOnly = true)
+    public int[] obtenerNumeroClientesDelTotal(Company company){
+        int clientesPropios = appointmentRepository.numeroClientes(company.getId());
+        HashSet<Company> empresasDelSector = new HashSet<>(companyRepository.empresasPorCategoria(company.getCategory().getId()));
+        HashSet<Company> empresasCercanas = criterioUbicacion(empresasDelSector, company.getAddress(), 30000);
+        HashSet<Integer> listaIdsClientesTotales = obtenerClientesDiferentesListaDeEmpresas(empresasCercanas);
+        int clientesTotales = listaIdsClientesTotales.size();
+        return new int[] {clientesPropios, clientesTotales};
+    }
+
+    private ArrayList<LocalDate> obtenerFechasUltimos6Meses(){
+        LocalDate hoy = LocalDate.now();
+        LocalDate hace6Meses = hoy.minusMonths(6);
+        long numOfDaysBetween = ChronoUnit.DAYS.between(hace6Meses, hoy) + 1;
+        return new ArrayList<LocalDate>(IntStream.iterate(0, i -> i + 1)
+                .limit(numOfDaysBetween)
+                .mapToObj(i -> hace6Meses.plusDays(i))
+                .collect(Collectors.toList()));
+    }
+
+    private Map<String, ArrayList<Integer>> obtenerNumerosSemanasYDias(List<LocalDate> fechas){
+        ArrayList<Integer> semanas = new ArrayList<>();
+        ArrayList<Integer> dias = new ArrayList<>();
+        for(LocalDate fecha : fechas){
+            WeekFields weekFields = WeekFields.of(Locale.getDefault());
+            int weekNumber = fecha.get(weekFields.weekOfWeekBasedYear());
+            semanas.add(weekNumber);
+            dias.add(fecha.getDayOfWeek().getValue());
+        }
+        Map<String,ArrayList<Integer>> map = new HashMap();
+        map.put("semanas", semanas);
+        map.put("dias", dias);
+        return map;
+    }
+
+    private Map<String, ArrayList> obtenerValoresYTextosHeatMap(ArrayList<LocalDate> todasLasFechas, List<Object[]> fechasyCantidadReservas){
+        ArrayList<Integer> valores = new ArrayList<>();
+        ArrayList<String> textos = new ArrayList<>();
+        Locale spanishLocale = new Locale("es", "ES");
+
+        int index = 0;
+        for(LocalDate fecha : todasLasFechas){
+            int valor = 0;
+            LocalDate fechaAux = null;
+            if(index < fechasyCantidadReservas.size()){
+                fechaAux = LocalDate.parse(fechasyCantidadReservas.get(index)[0].toString());
+            }
+
+            if(fecha.equals(fechaAux)){
+                valor = Integer.parseInt(fechasyCantidadReservas.get(index)[1].toString());
+                index++;
+            }
+
+            valores.add(valor);
+            String mes = fecha.format(DateTimeFormatter.ofPattern("MMMM", spanishLocale));
+            String texto = fecha.getDayOfMonth() + "-" + mes + " " + valor + " Reservas";
+            textos.add(texto);
+        }
+
+        Map<String, ArrayList> map = new HashMap();
+        map.put("valores", valores);
+        map.put("textos", textos);
+        return map;
+    }
+
+    private EjeHeatMapGrafico obtenerEjeXHeatMap(List<LocalDate> fechas){
+        Locale spanishLocale = new Locale("es", "ES");
+        ArrayList<String> tickText = new ArrayList<>();
+        ArrayList<Integer> tickVals = new ArrayList<>();
+
+        for(LocalDate fecha : fechas){
+            WeekFields weekFields = WeekFields.of(Locale.getDefault());
+            int weekNumber = fecha.get(weekFields.weekOfWeekBasedYear());
+            String mes = fecha.format(DateTimeFormatter.ofPattern("MMMM", spanishLocale)).substring(0, 3);
+            if(!tickText.contains(mes)){
+                tickText.add(mes);
+                tickVals.add(weekNumber);
+            }
+        }
+        EjeHeatMapGrafico ejeX = new EjeHeatMapGrafico(tickText, tickVals);
+        return ejeX;
+    }
+
+    @Transactional(readOnly = true)
+    public HeatMapGrafico obtenerHeatMap(Company company){
+        List<Object[]> fechasYCantidadReservas = appointmentRepository.numeroReservasPorDiaUltimos6Meses(company.getId());
+        ArrayList<LocalDate> todasLasFechasUltimos6Meses = obtenerFechasUltimos6Meses();
+        Map<String, ArrayList<Integer>> map = obtenerNumerosSemanasYDias(todasLasFechasUltimos6Meses);
+        ArrayList<Integer> semanas = map.get("semanas");
+        ArrayList<Integer> dias = map.get("dias");
+        Map<String, ArrayList> map2 = obtenerValoresYTextosHeatMap(todasLasFechasUltimos6Meses, fechasYCantidadReservas);
+        ArrayList<Integer> valores = map2.get("valores");
+        ArrayList<String> textos = map2.get("textos");
+        int valorMax = Collections.max(valores);
+        EjeHeatMapGrafico ejeX = obtenerEjeXHeatMap(todasLasFechasUltimos6Meses);
+
+        HeatMapGrafico grafico = new HeatMapGrafico(semanas, dias, valores, textos, valorMax, ejeX);
+        return grafico;
     }
 
 }
